@@ -1,0 +1,34 @@
+{
+  "name": "lexermal_mediumgram",
+  "version": "0.1.0",
+  "main": "index.js",
+  "description": "A Node.js Telegram Bot to subscribe Medium articles for reading",
+  "repository": "https://github.com/lexermal/mediumgram",
+  "author": "Lexermal",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "@types/node": "^16.11.11",
+    "typescript": "^4.5.2",
+    "dotenv": "^7.0.0",
+    "rss-parser": "^3.7.0",
+    "telegraf": "^3.27.1"
+  },
+  "devDependencies": {
+    "ts-node": "^10.4.0"
+  },
+  "scripts": {
+    "build": "yarn tsc",
+    "start": "node ./bin/index.js",
+    "dev": "yarn ts-node ./src/index.ts"
+  },
+  "keywords": [
+    "Medium",
+    "Telegram",
+    "Bot"
+  ],
+  "bugs": {
+    "url": "https://github.com/lexermal/mediumgram/issues"
+  },
+  "homepage": "https://github.com/lexermal/mediumgram#readme"
+}
