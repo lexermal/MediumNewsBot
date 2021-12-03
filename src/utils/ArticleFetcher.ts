@@ -11,7 +11,7 @@ const log = Log.getInstance();
 export async function fetchNewArticles(con: Connection) {
     log.info("Starting to fetch new articles.");
 
-    const fetchingDuration = 6; //minutes
+    const fetchingDuration = 4; //minutes  //needs to be shorter then sending
 
     const sourceItems = await con.getRepository(Source).find();
     log.debug("Found " + sourceItems.length + " sources in the database.");

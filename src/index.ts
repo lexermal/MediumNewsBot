@@ -1,7 +1,6 @@
 import "reflect-metadata";
 import Log from './Logger';
-import Telegraf from 'telegraf'
-import Content from './content/en.json';
+import Telegraf, { Extra } from 'telegraf'
 import { Connection, createConnection } from 'typeorm';
 import { sendNewArticles } from './utils/ArticleSender';
 import { fetchNewArticles } from './utils/ArticleFetcher';
@@ -9,6 +8,7 @@ import { getSource } from "./utils/SourceTypeAnalyser";
 import { addSource, getSourceList } from "./utils/SourceHandler";
 import { Source, SourceType } from './entity/Source';
 import { URL } from "url";
+import { Content } from "./content/Content";
 
 const bot = new Telegraf(process.env.TELEGRAF_TOKEN || "")
 const log = Log.getInstance();
@@ -18,62 +18,6 @@ async function startBot(con: Connection) {
     bot.hears(/\/start/, (msg) => msg.replyWithMarkdown(Content.start))
 
     bot.hears(/\/help/, (msg) => msg.replyWithMarkdown(Content.help))
-
-    bot.hears(/\/user (.+)/, (msg) => {
-        const urlPart = msg.match![1];
-        const chatID = msg.message!.chat.id;
-
-        addSource(con, SourceType.USER, [urlPart], chatID || 0);
-
-        msg.replyWithMarkdown(`*${urlPart}* ${Content.sucessfullyAdded}`);
-    })
-
-    bot.hears(/\/user/, (msg) => msg.replyWithMarkdown(Content.user))
-
-    bot.hears(/\/custom (.+)/, (msg) => {
-        const urlPart = msg.match![1];
-        const chatID = msg.message!.chat.id;
-
-        addSource(con, SourceType.DOMAIN, [urlPart], chatID || 0);
-
-        msg.replyWithMarkdown(`*${urlPart}* ${Content.sucessfullyAdded}`);
-    })
-
-    bot.hears(/\/custom/, (msg) => msg.replyWithMarkdown(Content.custom))
-
-    bot.hears(/\/tag (.+)/, (msg) => {
-        const urlPart = msg.match![1];
-        const chatID = msg.message!.chat.id;
-
-        addSource(con, SourceType.TAG, [urlPart], chatID || 0);
-
-        msg.replyWithMarkdown(`*${urlPart}* ${Content.sucessfullyAdded}`);
-    })
-
-    bot.hears(/\/tag/, (msg) => msg.replyWithMarkdown(Content.tag))
-
-    bot.hears(/\/tagged (.+)/, (msg) => {
-        const elements = msg.match![1].split(' ');
-        const chatID = msg.message!.chat.id;
-
-        addSource(con, SourceType.TAGGED, elements, chatID || 0);
-
-        msg.replyWithMarkdown(`*${elements.join(" ")}* ${Content.sucessfullyAdded}`);
-
-    })
-
-    bot.hears(/\/tagged/, (msg) => msg.replyWithMarkdown(Content.tagged))
-
-    bot.hears(/\/publication (.+)/, async (msg) => {
-        const urlPart = msg.match![1];
-        const chatID = msg.message!.chat.id;
-
-        addSource(con, SourceType.PUBLICATION, [urlPart], chatID || 0);
-
-        msg.replyWithMarkdown(`*${urlPart}* ${Content.sucessfullyAdded}`);
-    })
-
-    bot.hears(/\/publication/, (msg) => msg.replyWithMarkdown(Content.publication))
 
     bot.hears(/\/add (.+)/, async (msg) => {
         const url = msg.match![1];
@@ -98,10 +42,10 @@ async function startBot(con: Connection) {
                 throw new Error(`Unknown sourcetype '${sourceType}'.`)
         }
 
-        msg.replyWithMarkdown(`*${urlPart}* of type *${sourceType}* ${Content.sucessfullyAdded}`);
+        msg.replyWithMarkdown(`*${urlPart}* of type *${sourceType}* ${Content.added}`);
     })
 
-    bot.hears(/\/add/, (msg) => msg.replyWithMarkdown(Content.publication));
+    bot.hears(/\/add/, (msg) => msg.replyWithMarkdown(Content.add, Extra.webPreview(false)));
 
     bot.hears(/\/list/, async (msg) => {
         const chatId = msg.message!.chat.id;
@@ -136,14 +80,21 @@ async function startBot(con: Connection) {
         const sourceToBeRemoved = sources[removeSourceId - 1];
         const sourceName = sourceToBeRemoved.urlPart1;
 
-        if (removeSourceId) {
-            con.getRepository(Source).remove(sourceToBeRemoved);
-            msg.replyWithMarkdown(`*${sourceName}* was successfully removed.`);
-        } else {
-            const sourceList = await getFormattedSourceList(sources)
-            msg.replyWithMarkdown(`To remove a source type '/remove <id of source>'\r\n\r\n*Your medium sources*\r\n\r\n${sourceList}`);
-        }
+        con.getRepository(Source).remove(sourceToBeRemoved);
+        msg.replyWithMarkdown(`*${sourceName}* was successfully removed.`);
     })
+
+    bot.hears(/\/remove/, async (msg) => {
+        const chatId = msg.message!.chat.id;
+        const sources = await getSourceList(con, chatId);
+
+        let sourceList = getFormattedSourceList(sources)
+        if (sourceList.length === 0) {
+            sourceList = "No sources are in your list.";
+        }
+
+        msg.replyWithMarkdown(Content.remove + `\r\n\r\n\r\n*Your medium sources:*\r\n\r\n${sourceList}`);
+    });
 
     bot.launch();
 

@@ -31,7 +31,7 @@ export async function sendNewArticles(bot: Telegraf<TelegrafContext>, con: Conne
 
         unseenArticles.forEach(item => {
             const categories = item.getCategories().map(c => "#" + c).join(" ");
-            bot.telegram.sendMessage(chatId, item.link + "\r\nHashtags: " + categories);
+            bot.telegram.sendMessage(chatId, item.link + "\r\nhashtags: " + categories);
         });
 
         log.debug(`Sent ${userArticles.length} unread articles to ${chatId}.`);

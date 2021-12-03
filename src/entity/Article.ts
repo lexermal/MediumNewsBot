@@ -29,7 +29,7 @@ export class Article {
 
 
     public setCategories(categories: string[]) {
-        this.categories = categories.join(";").replace("-", "_");
+        this.categories = categories.join(";").replaceAll("-", "_");
     }
 
     public getCategories() {
