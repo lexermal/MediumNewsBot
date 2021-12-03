@@ -1,8 +1,8 @@
-# Mediumgram
+# Medium news bot
 
 Read Medium articles on Telegram!
 
-Try it out: [Mediumgram](https://telegram.me/mediumgrambot)
+Try it out: [mediumNewsBot](https://telegram.me/keiwosle_new_bot)
 
 
 #### List of available commands:
