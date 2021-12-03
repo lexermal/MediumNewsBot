@@ -25,19 +25,12 @@ export async function sendNewArticles(bot: Telegraf<TelegrafContext>, con: Conne
     log.debug(groupedEntries.size + " users will get new articles.");
 
     groupedEntries.forEach(async (articleIds, chatId) => {
-        console.log("chat id", chatId);
-
         const unseenArticles = await con.manager.getRepository(Article).find({
             where: { articleId: In(articleIds) }
         });
 
-
-        console.log("unseed articles", unseenArticles);
-
         unseenArticles.forEach(item => {
-            console.log("chatid" + chatId, "message" + item.link)
-            const r = bot.telegram.sendMessage(chatId, "Hello world " + item.link);
-            console.log("response ", r);
+            bot.telegram.sendMessage(chatId, item.link);
         });
 
         log.debug(`Sent ${userArticles.length} unread articles to ${chatId}.`);
@@ -52,7 +45,6 @@ function groupArticlesByUser(userArticles: UserArticle[]): Map<number, string[]>
 
     userArticles.forEach(article => {
         const id = article.chatId;
-        console.log("grouped entries", groupedEntries)
 
         const entries = groupedEntries.get(id);
         groupedEntries.set(id, [...entries || [], article.articleId]);

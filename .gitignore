@@ -46,3 +46,4 @@ package-lock.json
 CONTENT.md
 TODO
 macris.sqlite3
+database.sqlite
