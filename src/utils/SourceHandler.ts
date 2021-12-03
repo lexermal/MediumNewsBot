@@ -20,3 +20,7 @@ export async function addSource(con: Connection, type: SourceType, urlParts: str
         log.info(`Successfully added source ${urlParts} for user ${chatId}.`);
     }
 }
+
+export async function getSourceList(con: Connection, chatId: number) {
+    return await con.getRepository(Source).find({ chatId });
+}

@@ -24,9 +24,10 @@ Try it out: [Mediumgram](https://telegram.me/mediumgrambot)
 * If right after the start an user adds a source, the articles will not be set. It's an timing issue.
 
 
+## Build the container
+1. sudo docker build . -t mediumgram
+2. sudo docker run -d mediumgram 
+
 ## Todo
-* Build the application.
-* Create docker container.
 * Start telegram bot on Ipax server.
 * seen proxy for knowing which article the user really reads. 
-* Add /remove and /list

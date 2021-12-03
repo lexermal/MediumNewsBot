@@ -6,8 +6,8 @@ import { Connection, createConnection } from 'typeorm';
 import { sendNewArticles } from './utils/ArticleSender';
 import { fetchNewArticles } from './utils/ArticleFetcher';
 import { getSource } from "./utils/SourceTypeAnalyser";
-import { addSource } from "./utils/SourceHandler";
-import { SourceType } from './entity/Source';
+import { addSource, getSourceList } from "./utils/SourceHandler";
+import { Source, SourceType } from './entity/Source';
 import { URL } from "url";
 
 const bot = new Telegraf(process.env.TELEGRAF_TOKEN || "")
@@ -103,10 +103,58 @@ async function startBot(con: Connection) {
 
     bot.hears(/\/add/, (msg) => msg.replyWithMarkdown(Content.publication));
 
+    bot.hears(/\/list/, async (msg) => {
+        const chatId = msg.message!.chat.id;
+
+        let sourceList = await getFormattedSourceList(await getSourceList(con, chatId))
+
+        if (sourceList.length === 0) {
+            sourceList = "No sources are in your list.";
+        }
+
+        msg.replyWithMarkdown(`*Your medium sources:*\r\n\r\n${sourceList}`);
+    })
+
+    bot.hears(/\/remove (.+)/, async (msg) => {
+        const chatId = msg.message!.chat.id;
+        const removeSourceId = Number((msg.match![1]).toString().trim());
+
+        if (Number.isNaN(removeSourceId)) {
+            log.debug(`The user ${chatId} tried to delete a source with the invalid id '${removeSourceId}'.`)
+            msg.replyWithMarkdown("The privided id is no number.");
+            return;
+        }
+
+        const sources = await getSourceList(con, chatId);
+
+        if (removeSourceId < 1 || removeSourceId > sources.length) {
+            log.debug(`The user ${chatId} tried to delete a source with an id that is not in the allowed range: '${removeSourceId}'.`)
+            msg.replyWithMarkdown(`The id ${removeSourceId} was not found.`);
+            return;
+        }
+
+        const sourceToBeRemoved = sources[removeSourceId - 1];
+        const sourceName = sourceToBeRemoved.urlPart1;
+
+        if (removeSourceId) {
+            con.getRepository(Source).remove(sourceToBeRemoved);
+            msg.replyWithMarkdown(`*${sourceName}* was successfully removed.`);
+        } else {
+            const sourceList = await getFormattedSourceList(sources)
+            msg.replyWithMarkdown(`To remove a source type '/remove <id of source>'\r\n\r\n*Your medium sources*\r\n\r\n${sourceList}`);
+        }
+    })
+
     bot.launch();
 
     log.info("Successfully started the telegram bot!");
     return con;
+}
+
+function getFormattedSourceList(sources: Source[]) {
+    return sources
+        .map((source, index) => "*" + (index + 1) + "*: " + source.urlPart1)
+        .join("\r\n");
 }
 
 
@@ -116,4 +164,4 @@ createConnection().then(startBot).then(async con => {
     log.info("Starting to fetch new articles and send out unread ones.")
     fetchNewArticles(con);
     sendNewArticles(bot, con);
-}).catch(error => log.error(error,(error as Error).stack));
+}).catch(error => log.error(error, (error as Error).stack));
