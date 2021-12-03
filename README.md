@@ -17,3 +17,6 @@ Try it out: [Mediumgram](https://telegram.me/mediumgrambot)
 - ***/tag*** `<tag>` - Get the last articles with a specific tag
 
 - ***/tagged*** `<publication>` `<tag>` - Get the last articles from a specific publication with a specific tag
+
+## Known Issues
+* If right after the start an user adds a source, the articles will not be set. It's an timing issue.

@@ -5,5 +5,6 @@
     "publication": "Please specify a publication after the command to get the last articles from a specific publication.\r\n\r\n\r\n*Example:*\r\n\r\n\/publication the-mission\r\n\r\n\r\nIf you need the list of the commands just type \/help",
     "custom": "Please specify a domain after the command to get the last articles from a specific publication with custom domain.\r\n\r\n\r\n*Example:*\r\n\r\n\/custom \\hackernoon.com\r\n\r\n\r\nIf you need the list of the commands just type \/help",
     "tag": "Please specify a tag after the command to get the last articles with a specific tag.\r\n\r\n\r\n*Example:*\r\n\r\n\/tag news\r\n\r\n\r\nIf you need the list of the commands just type \/help",
-    "tagged": "Please specify a publication and a tag after the command to get the last articles from a specific publication with a specific tag.\r\n\r\n\r\n*Example:*\r\n\r\n\/tagged the-mission news\r\n\r\n\r\nIf you need the list of the commands just type \/help"
+    "tagged": "Please specify a publication and a tag after the command to get the last articles from a specific publication with a specific tag.\r\n\r\n\r\n*Example:*\r\n\r\n\/tagged the-mission news\r\n\r\n\r\nIf you need the list of the commands just type \/help",
+    "sucessfullyAdded": " was sucessfully added."
 }
