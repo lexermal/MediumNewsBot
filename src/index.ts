@@ -15,10 +15,6 @@ const log = Log.getInstance();
 
 
 async function startBot(con: Connection) {
-    bot.hears(/\/start/, (msg) => msg.replyWithMarkdown(Content.start))
-
-    bot.hears(/\/help/, (msg) => msg.replyWithMarkdown(Content.help))
-
     bot.hears(/\/add (.+)/, async (msg) => {
         const url = msg.match![1];
         const chatID = msg.message!.chat.id;
@@ -95,6 +91,10 @@ async function startBot(con: Connection) {
 
         msg.replyWithMarkdown(Content.remove + `\r\n\r\n\r\n*Your medium sources:*\r\n\r\n${sourceList}`);
     });
+
+    bot.hears(/\/start/, (msg) => msg.replyWithMarkdown(Content.start))
+
+    bot.hears(/\/help/, (msg) => msg.replyWithMarkdown(Content.help))
 
     bot.launch();
 
