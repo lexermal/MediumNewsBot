@@ -9,9 +9,9 @@ const fetcher = new Fetcher();
 const log = Log.getInstance();
 
 export async function fetchNewArticles(con: Connection) {
-    log.debug("Starting to fetch new articles.");
+    log.info("Starting to fetch new articles.");
 
-    const fetchingDuration = 0.3; //minutes
+    const fetchingDuration = 6; //minutes
 
     const sourceItems = await con.getRepository(Source).find();
     log.debug("Found " + sourceItems.length + " sources in the database.");

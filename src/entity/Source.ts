@@ -30,10 +30,10 @@ export class Source {
 
 
 export enum SourceType {
-    PUBLISHER,
-    TAG,
-    USER,
-    PUBLICATION,
-    DOMAIN,
-    TAGGED
+    TAG = "tag",
+    USER = "user",
+    DOMAIN = "domain",
+    TAGGED = "tagged",
+    PUBLISHER = "publisher",
+    PUBLICATION = "publication",
 }

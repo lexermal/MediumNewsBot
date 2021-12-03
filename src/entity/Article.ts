@@ -7,7 +7,7 @@ export class Article {
     id: number;
 
     @Column()
-    articleId:string;
+    articleId: string;
 
     @Column()
     title: string;
@@ -29,10 +29,10 @@ export class Article {
 
 
     public setCategories(categories: string[]) {
-        this.categories = categories.join(";");
+        this.categories = categories.join(";").replace("-", "_");
     }
 
-    get getCategories() {
+    public getCategories() {
         return this.categories.split(";");
     }
 }

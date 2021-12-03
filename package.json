@@ -1,7 +1,7 @@
 {
   "name": "lexermal_mediumgram",
   "version": "0.1.0",
-  "main": "index.js",
+  "main": "bin/index.js",
   "description": "A Node.js Telegram Bot to subscribe Medium articles for reading",
   "repository": "https://github.com/lexermal/mediumgram",
   "author": "Lexermal",
@@ -23,8 +23,7 @@
     "ts-node": "^10.4.0"
   },
   "scripts": {
-    "build": "yarn tsc",
-    "start": "node --require dotenv/config ./bin/index.js",
+    "start": "yarn install && yarn dev",
     "dev": "yarn ts-node --require dotenv/config ./src/index.ts"
   },
   "keywords": [

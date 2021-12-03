@@ -10,7 +10,7 @@ const log = Log.getInstance();
 export async function sendNewArticles(bot: Telegraf<TelegrafContext>, con: Connection) {
     log.info("Start sending new articles.");
 
-    const sendingDuration = 0.2; //minutes
+    const sendingDuration = 5; //minutes
 
     const timestamp = new Date(Date.now() - sendingDuration * 60 * 1000); //now minus 4 minutes
 
@@ -30,7 +30,8 @@ export async function sendNewArticles(bot: Telegraf<TelegrafContext>, con: Conne
         });
 
         unseenArticles.forEach(item => {
-            bot.telegram.sendMessage(chatId, item.link);
+            const categories = item.getCategories().map(c => "#" + c).join(" ");
+            bot.telegram.sendMessage(chatId, item.link + "\r\nHashtags: " + categories);
         });
 
         log.debug(`Sent ${userArticles.length} unread articles to ${chatId}.`);
