@@ -160,7 +160,12 @@ function getFormattedSourceList(sources: Source[]) {
 
 log.info("Starting the telegram bot.");
 
-createConnection().then(startBot).then(async con => {
+createConnection({
+    type: "sqlite",
+    database: __dirname + '/db/database.sqlite',
+    entities: [__dirname + '/entity/**/*.ts'],
+    synchronize: true,
+}).then(startBot).then(async con => {
     log.info("Starting to fetch new articles and send out unread ones.")
     fetchNewArticles(con);
     sendNewArticles(bot, con);
