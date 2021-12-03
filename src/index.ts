@@ -162,7 +162,7 @@ log.info("Starting the telegram bot.");
 
 createConnection({
     type: "sqlite",
-    database: __dirname + '/db/database.sqlite',
+    database: __dirname + '/../db/database.sqlite',
     entities: [__dirname + '/entity/**/*.ts'],
     synchronize: true,
 }).then(startBot).then(async con => {

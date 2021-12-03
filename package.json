@@ -23,7 +23,7 @@
     "ts-node": "^10.4.0"
   },
   "scripts": {
-    "start": "yarn install && yarn dev",
+    "start": "yarn dev",
     "dev": "yarn ts-node --require dotenv/config ./src/index.ts"
   },
   "keywords": [

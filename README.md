@@ -29,8 +29,8 @@ Try it out: [mediumNewsBot](https://telegram.me/keiwosle_new_bot)
 
 
 ## Build the container
-1. sudo docker build . -t mediumgram
-2. sudo docker run -d mediumgram 
+1. sudo docker build . -t mediumnewsbot
+2. sudo docker run -d mediumnewsbot 
 
 ## Todo
 * seen proxy for knowing which article the user really reads. 
