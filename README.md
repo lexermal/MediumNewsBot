@@ -9,6 +9,10 @@ Try it out: [Mediumgram](https://telegram.me/mediumgrambot)
 
 
 - ***/add*** `<url>` - Adds the publisher/domain/tag to your subscriped sources.
+
+- ***/list*** - Shows all your subscriped sources.
+
+- ***/remove*** `<id>` - Removes the publisher/domain/tag to your subscriped sources.
   
 - ***/user*** `<username>` - Get the last articles from a specific user
 
@@ -29,5 +33,5 @@ Try it out: [Mediumgram](https://telegram.me/mediumgrambot)
 2. sudo docker run -d mediumgram 
 
 ## Todo
-* Start telegram bot on Ipax server.
 * seen proxy for knowing which article the user really reads. 
+* Remove unnecessary commands.
