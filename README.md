@@ -23,4 +23,4 @@ Try it out: [mediumNewsBot](https://telegram.me/keiwosle_new_bot)
 * seen proxy for knowing which article the user really reads. 
 * Checking out how migrations work with typeorm.
 * Set a flag when a article is sent out to a user
-* Tags should maybe only return the top article, not all.
+* Don't spam the user with articles on adding.

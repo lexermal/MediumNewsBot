@@ -21,7 +21,7 @@ export async function fetchNewArticles(con: Connection, fetchingDuration: number
 
         // the list of articles that could be added needs to be unique. 
         // Otherwise the database check does not work because of the async operations 
-        await Promise.all(uniqueArticles.map(article => addArticle(con, article, source.chatId)));
+        await Promise.all(uniqueArticles.map(article => addArticle(con, article, source.chatId, source.id)));
     }))
 
     log.debug(`Finished fetching new articles. Waiting for ${fetchingDuration - 1} minutes.`);
@@ -30,7 +30,7 @@ export async function fetchNewArticles(con: Connection, fetchingDuration: number
 }
 
 
-export async function addArticle(con: Connection, article: Article, chatId: number) {
+export async function addArticle(con: Connection, article: Article, chatId: number, sourceId: number) {
 
     if (!await con.getRepository(Article).findOne({ articleId: article.articleId })) {
 
@@ -45,6 +45,7 @@ export async function addArticle(con: Connection, article: Article, chatId: numb
         userArticle.chatId = chatId;
         userArticle.added = Date.now();
         userArticle.articleId = article.articleId;
+        userArticle.sourceId = sourceId;
 
         await con.manager.save(userArticle);
     }

@@ -12,6 +12,9 @@ export class UserArticle {
     @Column()
     articleId: string;
 
+    @Column({ nullable: true })
+    sourceId: number;
+
     @Column()
     added: number;
 
