@@ -33,7 +33,5 @@ export enum SourceType {
     TAG = "tag",
     USER = "user",
     DOMAIN = "domain",
-    TAGGED = "tagged",
-    PUBLISHER = "publisher",
     PUBLICATION = "publication",
 }

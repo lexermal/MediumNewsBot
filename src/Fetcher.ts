@@ -10,16 +10,14 @@ export class Fetcher {
 
     private getURL(type: SourceType, urlParts: string[]) {
         switch (type) {
-            case SourceType.PUBLISHER:
-                return `https://medium.com/feed/${urlParts[0]}`;
             case SourceType.USER:
                 return `https://medium.com/feed/@${urlParts[0]}`;
             case SourceType.DOMAIN:
                 return `https://${urlParts[0]}/feed/`;
             case SourceType.TAG:
                 return `https://medium.com/feed/tag/${urlParts[0]}`;
-            case SourceType.TAGGED:
-                return `https://medium.com/feed/${urlParts[0]}/tagged/${urlParts[1]}`;
+            // case SourceType.TAGGED:
+                // return `https://medium.com/feed/${urlParts[0]}/tagged/${urlParts[1]}`;
             case SourceType.PUBLICATION:
                 return `https://medium.com/feed/${urlParts[0]}`;
             default:

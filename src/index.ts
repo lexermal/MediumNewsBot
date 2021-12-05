@@ -4,7 +4,7 @@ import Telegraf, { Extra } from 'telegraf'
 import { Connection, createConnection } from 'typeorm';
 import { sendNewArticles } from './utils/ArticleSender';
 import { fetchNewArticles } from './utils/ArticleFetcher';
-import { getSource } from "./utils/SourceTypeAnalyser";
+import { getSource, isValidHttpUrl } from "./utils/SourceTypeAnalyser";
 import { addSource, getSourceList } from "./utils/SourceHandler";
 import { Source, SourceType } from './entity/Source';
 import { URL } from "url";
@@ -15,9 +15,15 @@ const log = Log.getInstance();
 
 
 async function startBot(con: Connection) {
+
     bot.hears(/\/add (.+)/, async (msg) => {
         const url = msg.match![1];
         const chatID = msg.message!.chat.id;
+
+        if (!isValidHttpUrl(url)) {
+            msg.replyWithMarkdown("The provided url is not valid.");
+            return;
+        }
 
         const [sourceType, urlPart] = getSource(new URL(url))
 
@@ -103,9 +109,17 @@ async function startBot(con: Connection) {
 }
 
 function getFormattedSourceList(sources: Source[]) {
-    return sources
-        .map((source, index) => "*" + (index + 1) + "*: " + source.urlPart1)
-        .join("\r\n");
+    return sources.map((source, index) => {
+        let url = "https://medium.com/" + source.urlPart1;
+
+        if (source.type === SourceType.DOMAIN) {
+            url = source.urlPart1;
+        } else if (source.type === SourceType.TAG) {
+            url = "https://medium.com/tag/" + source.urlPart1;
+        }
+
+        return `*${index + 1}*: [${source.urlPart1}](${url})`;
+    }).join("\r\n");
 }
 
 
@@ -118,6 +132,9 @@ createConnection({
     synchronize: true,
 }).then(startBot).then(async con => {
     log.info("Starting to fetch new articles and send out unread ones.")
-    fetchNewArticles(con);
-    sendNewArticles(bot, con);
-}).catch(error => log.error(error, (error as Error).stack));
+
+    const updateDuration = 5; //minutes
+
+    fetchNewArticles(con, updateDuration);
+    sendNewArticles(bot, con, updateDuration);
+})

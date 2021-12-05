@@ -8,10 +8,8 @@ import Log from "../Logger";
 const fetcher = new Fetcher();
 const log = Log.getInstance();
 
-export async function fetchNewArticles(con: Connection) {
+export async function fetchNewArticles(con: Connection, fetchingDuration: number) {
     log.info("Starting to fetch new articles.");
-
-    const fetchingDuration = 4; //minutes  //needs to be shorter then sending
 
     const sourceItems = await con.getRepository(Source).find();
     log.debug("Found " + sourceItems.length + " sources in the database.");
@@ -19,21 +17,25 @@ export async function fetchNewArticles(con: Connection) {
     await Promise.all(sourceItems.map(async source => {
         const articles = await fetcher.getLatestArticles(source);
 
-        articles.forEach(article => addArticle(con, article, source.chatId));
+        const uniqueArticles = [...new Set(articles)];
+
+        // the list of articles that could be added needs to be unique. 
+        // Otherwise the database check does not work because of the async operations 
+        await Promise.all(uniqueArticles.map(article => addArticle(con, article, source.chatId)));
     }))
 
-    log.debug(`Finished fetching new articles. Waiting for ${fetchingDuration} minutes.`);
+    log.debug(`Finished fetching new articles. Waiting for ${fetchingDuration - 1} minutes.`);
 
-    setTimeout(() => fetchNewArticles(con), fetchingDuration * 60 * 1000);
+    setTimeout(() => fetchNewArticles(con, fetchingDuration), (fetchingDuration - 1) * 60 * 1000);
 }
 
 
 export async function addArticle(con: Connection, article: Article, chatId: number) {
 
-    if (!(await con.getRepository(Article).findOne({ articleId: article.articleId }))) {
+    if (!await con.getRepository(Article).findOne({ articleId: article.articleId })) {
 
         await con.manager.save(article);
-        log.debug("Added new article " + article.articleId + " with the title '" + article.title + "'.");
+        log.debug(`Added new article ${article.articleId} with the title '${article.title}'.`);
     }
 
     if (!await con.getRepository(UserArticle).findOne({ chatId, articleId: article.articleId })) {

@@ -7,12 +7,10 @@ import Log from "../Logger";
 
 const log = Log.getInstance();
 
-export async function sendNewArticles(bot: Telegraf<TelegrafContext>, con: Connection) {
+export async function sendNewArticles(bot: Telegraf<TelegrafContext>, con: Connection, sendingDuration: number) {
     log.info("Start sending new articles.");
 
-    const sendingDuration = 5; //minutes
-
-    const timestamp = new Date(Date.now() - sendingDuration * 60 * 1000); //now minus 4 minutes
+    const timestamp = new Date(Date.now() - sendingDuration * 60 * 1000); //now minus x minutes
 
     const userArticles = await con.manager.find(UserArticle, {
         where: { added: MoreThan(timestamp) }
@@ -38,7 +36,7 @@ export async function sendNewArticles(bot: Telegraf<TelegrafContext>, con: Conne
     })
 
     log.debug(`Finished sending all unseen articles. Waiting ${sendingDuration} minutes.`)
-    setTimeout(() => sendNewArticles(bot, con), sendingDuration * 60 * 1000);
+    setTimeout(() => sendNewArticles(bot, con, sendingDuration), sendingDuration * 60 * 1000);
 }
 
 function groupArticlesByUser(userArticles: UserArticle[]): Map<number, string[]> {
