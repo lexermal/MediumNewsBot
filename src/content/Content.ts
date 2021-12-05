@@ -25,6 +25,8 @@ export class Content {
     
     *Example:*
     /add https://medium.com/hacker-daily
+
+Hint: If you subscribe to a tag, you will get the latest news of that tag. That are usually many articles.
     
 If you need the list of the commands just type /help`;
 

@@ -7,7 +7,8 @@ Try it out: [mediumNewsBot](https://telegram.me/keiwosle_new_bot)
 
 #### List of available commands:
 
-- ***/add*** `<url>` - Adds the publisher/domain/tag to your subscriped sources.
+- ***/add*** `<url>` - Adds the publisher/domain/tag/user to your subscriped sources.
+  Hint: If you subscribe to tags, you will get the latest news of that tag. That is usually very much.
 
 - ***/list*** - Shows all your subscriped sources.
 
