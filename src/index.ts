@@ -58,7 +58,7 @@ async function startBot(con: Connection) {
             sourceList = "No sources are in your list.";
         }
 
-        msg.replyWithMarkdown(`*Your medium sources:*\r\n\r\n${sourceList}`);
+        msg.replyWithMarkdown(`*Your medium sources:*\r\n\r\n${sourceList}`, Extra.webPreview(false));
     })
 
     bot.hears(/\/remove (.+)/, async (msg) => {
