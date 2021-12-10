@@ -1,4 +1,4 @@
-# Medium news bot
+# Medium News Bot
 
 Read Medium articles on Telegram!
 
@@ -16,11 +16,10 @@ Try it out: [mediumNewsBot](https://telegram.me/keiwosle_new_bot)
   
 
 ## Build the container
-1. sudo docker build . -t mediumnewsbot
-2. sudo docker run -d mediumnewsbot 
+1. docker build . -t mediumnewsbot
+2. docker run -d mediumnewsbot 
 
 ## Todo
 * seen proxy for knowing which article the user really reads. 
-* Checking out how migrations work with typeorm.
-* Set a flag when a article is sent out to a user
-* Don't spam the user with articles on adding.
+* Fix dupplicates, the uniquing does not work because the ids are not the same
+* Add blocklist for Tags

@@ -24,6 +24,9 @@ export class Article {
     @Column()
     pubDate: string;
 
+    @Column({ nullable: true })
+    imageURL: string;
+
     @Column()
     categories: string;
 

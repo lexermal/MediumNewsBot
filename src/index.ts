@@ -2,7 +2,7 @@ import "reflect-metadata";
 import Log from './Logger';
 import Telegraf, { Extra } from 'telegraf'
 import { Connection, createConnection } from 'typeorm';
-import { sendNewArticles } from './utils/ArticleSender';
+import { getSourceLink, sendNewArticles } from './utils/ArticleSender';
 import { fetchNewArticles } from './utils/ArticleFetcher';
 import { getSource, isValidHttpUrl } from "./utils/SourceTypeAnalyser";
 import { addSource, getSourceList } from "./utils/SourceHandler";
@@ -109,17 +109,9 @@ async function startBot(con: Connection) {
 }
 
 function getFormattedSourceList(sources: Source[]) {
-    return sources.map((source, index) => {
-        let url = "https://medium.com/" + source.urlPart1;
-
-        if (source.type === SourceType.DOMAIN) {
-            url = source.urlPart1;
-        } else if (source.type === SourceType.TAG) {
-            url = "https://medium.com/tag/" + source.urlPart1;
-        }
-
-        return `*${index + 1}*: [${source.urlPart1}](${url})`;
-    }).join("\r\n");
+    return sources
+        .map((source, index) => `*${index + 1}*: ${getSourceLink(source)}`)
+        .join("\r\n");
 }
 
 
@@ -133,7 +125,7 @@ createConnection({
 }).then(startBot).then(async con => {
     log.info("Starting to fetch new articles and send out unread ones.")
 
-    const updateDuration = 5; //minutes
+    const updateDuration = Number(process.env.DURATION || 5); //minutes
 
     fetchNewArticles(con, updateDuration);
     sendNewArticles(bot, con, updateDuration);

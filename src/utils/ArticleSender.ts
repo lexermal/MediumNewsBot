@@ -2,7 +2,7 @@ import Telegraf from "telegraf";
 import { TelegrafContext } from "telegraf/typings/context";
 import { Connection, In, MoreThan } from "typeorm";
 import { Article } from "../entity/Article";
-import { Source } from "../entity/Source";
+import { Source, SourceType } from "../entity/Source";
 import { UserArticle } from "../entity/UserArticle";
 import Log from "../Logger";
 
@@ -29,13 +29,20 @@ export async function sendNewArticles(bot: Telegraf<TelegrafContext>, con: Conne
         });
 
         unseenArticles.forEach(async item => {
-            const categories = item.getCategories().map(c => "#" + c).join(" ");
+            const tags = item.getCategories();
 
             const currentUserArticle = userArticles.filter(ua => ua.articleId === item.articleId)[0];
 
             const source = await con.manager.findOne(Source, currentUserArticle.sourceId);
 
-            bot.telegram.sendMessage(chatId, `${item.link}\r\n\r\nsource: ${source?.urlPart1}\r\n${categories}`);
+            const message = getMessage(item.title, item.previewText, item.link, source!, tags);
+
+
+            if (!!item.imageURL) {
+                await bot.telegram.sendPhoto(chatId, item.imageURL, { parse_mode: 'MarkdownV2', caption: message });
+            } else {
+                await bot.telegram.sendMessage(chatId, message, { parse_mode: 'MarkdownV2' });
+            }
         });
 
         log.debug(`Sent ${userArticles.length} unread articles to ${chatId}.`);
@@ -56,4 +63,45 @@ function groupArticlesByUser(userArticles: UserArticle[]): Map<number, UserArtic
     });
 
     return groupedEntries;
+}
+
+function getMessage(title: string, teaser: string, link: string, source: Source, tags: string[]) {
+    const hashtags = tags.map(c => "\\#" + c).join(" ");
+
+    return `**[${escape(title)}](${escape(link)})**
+${escape(teaser)}
+
+From: ${getSourceLink(source)}
+${escape(hashtags)}`;
+}
+
+function escape(text: string) {
+    return text
+        .replace(/\./g, "\\.")
+        .replace(/\-/g, "\\-")
+        .replace(/\-/g, "\\-")
+        .replace(/\_/g, "\\_")
+        .replace(/\|/g, "\\|")
+        .replace(/\(/g, "\\(")
+        .replace(/\)/g, "\\)")
+        .replace(/\>/g, "\\>")
+        .replace(/\</g, "\\<")
+        .replace(/\-/g, "\\-")
+        .replace(/\+/g, "\\+")
+        .replace(/\!/g, "\\!");
+}
+
+export function getSourceLink(source: Source): string {
+    const urlPart = escape(source.urlPart1);
+
+
+    let url = `https://medium.com/${urlPart}`;
+
+    if (source.type === SourceType.DOMAIN) {
+        url = urlPart;
+    } else if (source.type === SourceType.TAG) {
+        url = `https://medium.com/tag/${urlPart}`;
+    }
+
+    return `[${urlPart}](${url})`;
 }

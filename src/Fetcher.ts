@@ -1,3 +1,4 @@
+import parse, { HTMLElement } from "node-html-parser";
 import Parser from "rss-parser";
 import { Article } from "./entity/Article";
 import { Source, SourceType } from "./entity/Source";
@@ -46,12 +47,19 @@ export class Fetcher {
                     const article = new Article();
 
                     article.articleId = item.guid!;
-                    article.title = item.title!;
+                    article.title = item.title!.replace(/(?:\r\n|\r|\n)/g, ' ');
                     article.link = item.link!.split("?")[0];
                     article.creator = item.creator!;
                     article.pubDate = item.isoDate!;
-                    article.previewText = item.contentSnippet || "";
+                    article.previewText = (item.contentSnippet || "").replace("Continue reading on Medium »", "").replace(/(?:\r\n|\r|\n)/g, ' ').replace("»", "");
                     article.setCategories(item.categories!);
+
+                    if (item.content) {
+                        const htmlObject = parse(item.content);
+                        const imageObject = (htmlObject.firstChild.childNodes[0].childNodes[0].childNodes[0] as HTMLElement);
+
+                        article.imageURL = imageObject?.attrs?.src || "";
+                    }
 
                     return article;
                 })
