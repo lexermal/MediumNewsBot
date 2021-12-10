@@ -129,4 +129,7 @@ createConnection({
 
     fetchNewArticles(con, updateDuration);
     sendNewArticles(bot, con, updateDuration);
+}).catch(e => {
+    log.error(e.message, e);
+    process.exit(1);
 })
