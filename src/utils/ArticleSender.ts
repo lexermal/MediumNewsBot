@@ -66,7 +66,7 @@ function groupArticlesByUser(userArticles: UserArticle[]): Map<number, UserArtic
 }
 
 function getMessage(title: string, teaser: string, link: string, source: Source, tags: string[]) {
-    const hashtags = tags.map(c => "\\#" + c).join(" ");
+    const hashtags = tags.map(c => '\#' + c).join(" ");
 
     return `**[${escape(title)}](${escape(link)})**
 ${escape(teaser)}
@@ -78,13 +78,13 @@ ${escape(hashtags)}`;
 function escape(text: string) {
     return text
         .replace(/\./g, "\\.")
-        .replace(/\-/g, "\\-")
-        .replace(/\-/g, "\\-")
+        .replace(/\-/g, '\-')
         .replace(/\_/g, "\\_")
         .replace(/\|/g, "\\|")
         .replace(/\(/g, "\\(")
         .replace(/\)/g, "\\)")
         .replace(/\>/g, "\\>")
+        .replace(/\#/g, "\\#")
         .replace(/\</g, "\\<")
         .replace(/\-/g, "\\-")
         .replace(/\+/g, "\\+")

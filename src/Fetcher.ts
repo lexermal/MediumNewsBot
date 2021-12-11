@@ -51,7 +51,7 @@ export class Fetcher {
                     article.link = item.link!.split("?")[0];
                     article.creator = item.creator!;
                     article.pubDate = item.isoDate!;
-                    article.previewText = (item.contentSnippet || "").replace("Continue reading on Medium »", "").replace(/(?:\r\n|\r|\n)/g, ' ').replace("»", "");
+                    article.previewText = (item.contentSnippet || "").replace(/(?:\r\n|\r|\n)/g, ' ').split("Continue reading on")[0].trim();
                     article.setCategories(item.categories!);
 
                     if (item.content) {
