@@ -3,8 +3,8 @@ import { TelegrafContext } from "telegraf/typings/context";
 import { Connection } from "typeorm";
 import { Content } from "../content/Content";
 import { BlacklistedTag } from "../entity/BlacklistedTag";
-import Log from "../Logger";
-import { addTagBlocking, getBacklistItems } from "../utils/BlacklistHandler";
+import Log from "../utils/Logger";
+import { addTagBlocking, getBacklistItems } from "../handler/BlacklistHandler";
 import { isValidId } from "./Utils";
 
 export function attachBlacklistHandling(bot: Telegraf<TelegrafContext>, con: Connection) {

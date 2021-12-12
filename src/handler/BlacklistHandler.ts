@@ -1,7 +1,7 @@
 import { Connection } from "typeorm";
 import { BlacklistedTag } from "../entity/BlacklistedTag";
 import { Source } from "../entity/Source";
-import Log from "../Logger";
+import Log from "../utils/Logger";
 
 const log = Log.getInstance();
 

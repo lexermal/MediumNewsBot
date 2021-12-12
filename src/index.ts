@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import Log from './Logger';
+import Log from './utils/Logger';
 import Telegraf from 'telegraf'
 import { Connection, createConnection } from 'typeorm';
 import { sendNewArticles } from './utils/ArticleSender';

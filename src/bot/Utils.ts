@@ -1,5 +1,5 @@
 import { TelegrafContext } from "telegraf/typings/context";
-import Log from "../Logger";
+import Log from "../utils/Logger";
 
 export function isValidId(msg: TelegrafContext, chatId: number, removeSourceId: number, maxIdIndex: number, log: Log) {
     if (Number.isNaN(removeSourceId)) {

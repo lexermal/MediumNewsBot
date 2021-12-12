@@ -2,8 +2,8 @@ import { Connection } from "typeorm";
 import { Article } from "../entity/Article";
 import { Source } from "../entity/Source";
 import { UserArticle } from "../entity/UserArticle";
-import { Fetcher } from "../Fetcher";
-import Log from "../Logger";
+import { Fetcher } from "./Fetcher";
+import Log from "./Logger";
 
 const fetcher = new Fetcher();
 const log = Log.getInstance();

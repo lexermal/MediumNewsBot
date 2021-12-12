@@ -1,6 +1,6 @@
-import Log from "../Logger";
 import { Connection } from "typeorm";
 import { SourceType, Source } from "../entity/Source";
+import Log from "../utils/Logger";
 
 const log = Log.getInstance();
 

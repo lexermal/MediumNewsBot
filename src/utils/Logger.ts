@@ -1,4 +1,3 @@
-import path from "path";
 import { TransformableInfo } from "logform";
 import { createLogger, format, Logger, transports } from "winston";
 

@@ -4,7 +4,7 @@ import { Connection, In, MoreThan } from "typeorm";
 import { Article } from "../entity/Article";
 import { Source, SourceType } from "../entity/Source";
 import { UserArticle } from "../entity/UserArticle";
-import Log from "../Logger";
+import Log from "./Logger";
 
 const log = Log.getInstance();
 

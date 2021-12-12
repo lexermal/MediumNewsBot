@@ -4,11 +4,11 @@ import { Connection } from "typeorm";
 import { URL } from "url";
 import { Content } from "../content/Content";
 import { SourceType, Source } from "../entity/Source";
-import Log from "../Logger";
+import Log from "../utils/Logger";
 import { getSourceLink } from "../utils/ArticleSender";
-import { addSource, getSourceList } from "../utils/SourceHandler";
 import { isValidHttpUrl, getSource } from "../utils/SourceTypeAnalyser";
 import { isValidId } from "./Utils";
+import { addSource, getSourceList } from "../handler/SourceHandler";
 
 export function attachSourceHandling(bot: Telegraf<TelegrafContext>, con: Connection) {
 
