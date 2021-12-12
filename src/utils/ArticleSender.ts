@@ -2,6 +2,7 @@ import Telegraf from "telegraf";
 import { TelegrafContext } from "telegraf/typings/context";
 import { Connection, In, MoreThan } from "typeorm";
 import { Article } from "../entity/Article";
+import { BlacklistedTag } from "../entity/BlacklistedTag";
 import { Source, SourceType } from "../entity/Source";
 import { UserArticle } from "../entity/UserArticle";
 import Log from "./Logger";
@@ -24,24 +25,41 @@ export async function sendNewArticles(bot: Telegraf<TelegrafContext>, con: Conne
     log.debug(groupedEntries.size + " users will get new articles.");
 
     groupedEntries.forEach(async (userArticles, chatId) => {
+        const blockedTags = (await con.manager.find(BlacklistedTag, { chatId })).map(blacklistedTags => blacklistedTags.tags.join(","));
+
         const unseenArticles = await con.manager.getRepository(Article).find({
             where: { articleId: In(userArticles.map(ua => ua.articleId)) }
         });
 
-        unseenArticles.forEach(async item => {
-            const tags = item.getCategories();
+        unseenArticles.forEach(async article => {
 
-            const currentUserArticle = userArticles.filter(ua => ua.articleId === item.articleId)[0];
+            const tags = article.getCategories();
+
+            const blockedTagIndex = tags.some(tag => blockedTags.indexOf(tag) >= 0);
+
+            //tags are inside because it needs to be tested if tagcombinations like '#health and #care' get really blocked
+            console.log("blocked tags", blockedTags)
+            console.log("tags used in article", tags.join(","))
+
+            if (blockedTagIndex) {
+                log.debug(`Blocked an article with the tags '${tags.join(" ")}' from getting send because the blocked tag ${blockedTags} matched.`);
+                return;
+            }
+
+            const currentUserArticle = userArticles.filter(ua => ua.articleId === article.articleId)[0];
 
             const source = await con.manager.findOne(Source, currentUserArticle.sourceId);
 
-            const message = getMessage(item.title, item.previewText, item.link, source!, tags);
+            const message = getMessage(article.title, article.previewText, article.link, source!, tags);
 
-
-            if (!!item.imageURL) {
-                await bot.telegram.sendPhoto(chatId, item.imageURL, { parse_mode: 'MarkdownV2', caption: message });
+            if (!!article.imageURL) {
+                await bot.telegram.sendPhoto(chatId, article.imageURL, { parse_mode: 'MarkdownV2', caption: message }).catch(e => {
+                    log.error(`Could not send article ${article.articleId} because ${e.message}. The message was: ${message}`);
+                });
             } else {
-                await bot.telegram.sendMessage(chatId, message, { parse_mode: 'MarkdownV2' });
+                await bot.telegram.sendMessage(chatId, message, { parse_mode: 'MarkdownV2' }).catch(e => {
+                    log.error(`Could not send article ${article.articleId} because ${e.message}. The message was: ${message}`);
+                });
             }
         });
 
