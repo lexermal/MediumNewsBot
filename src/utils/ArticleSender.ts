@@ -114,7 +114,9 @@ function escape(text: string) {
 }
 
 export function getSourceLink(source: Source): string {
-    const urlPart = escape(source.urlPart1);
+    const urlPart = source.urlPart1
+        .replace(/\./g, '\.')
+        .replace(/\-/g, '\-');
 
 
     let url = `https://medium.com/${urlPart}`;
