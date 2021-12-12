@@ -9,6 +9,7 @@ import { getSourceLink } from "../utils/ArticleSender";
 import { isValidHttpUrl, getSource } from "../utils/SourceTypeAnalyser";
 import { isValidId } from "./Utils";
 import { addSource, getSourceList } from "../handler/SourceHandler";
+import { Fetcher } from "../utils/Fetcher";
 
 export function attachSourceHandling(bot: Telegraf<TelegrafContext>, con: Connection) {
 
@@ -22,6 +23,12 @@ export function attachSourceHandling(bot: Telegraf<TelegrafContext>, con: Connec
         }
 
         const [sourceType, urlPart] = getSource(new URL(url))
+
+        if (!await Fetcher.isFetchable(Fetcher.getURL(sourceType, [urlPart]))) {
+            msg.replyWithMarkdown(`The url should be of type ${sourceType} but the RSS feed was not fetchable.` +
+                ` Are you sure you provided a url to a blog that uses the Medium.com CMS?`);
+            return;
+        }
 
         switch (sourceType) {
             case SourceType.DOMAIN:

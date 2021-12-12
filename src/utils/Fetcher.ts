@@ -12,10 +12,10 @@ export class Fetcher {
     }
 
     public async getLatestArticles(source: Source) {
-        return await this.getCurrentArticles(this.getURL(source.type, source.urlParts));
+        return await this.getCurrentArticles(Fetcher.getURL(source.type, source.urlParts));
     }
 
-    private getURL(type: SourceType, urlParts: string[]) {
+    public static getURL(type: SourceType, urlParts: string[]) {
         switch (type) {
             case SourceType.USER:
                 return `https://medium.com/feed/@${urlParts[0]}`;
@@ -32,6 +32,14 @@ export class Fetcher {
         }
 
     }
+
+
+    public static async isFetchable(url: string): Promise<boolean> {
+        const parser = new Parser();
+
+        return parser.parseURL(url).then(() => true).catch(() => false);
+    }
+
 
     async getCurrentArticles(url: string): Promise<Article[]> {
         const parser = new Parser();

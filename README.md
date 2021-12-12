@@ -14,6 +14,11 @@ Try it out: [mediumNewsBot](https://telegram.me/keiwosle_new_bot)
 
 - ***/remove*** `<id>` - Removes the publisher/domain/tag to your subscriped sources.
   
+- ***/block*** `<tag or tag combinations>` - Blocks articles that contain a curtain tag or combination of tags.
+
+- ***/unblock***`<id>` - Unblocks articles that contain a curtain tag or combination of tags.
+
+- ***/blacklist*** - Get a list of blocked tags.
 
 ## Build the container
 1. docker build . -t mediumnewsbot
@@ -21,5 +26,4 @@ Try it out: [mediumNewsBot](https://telegram.me/keiwosle_new_bot)
 
 ## Todo
 * seen proxy for knowing which article the user really reads. 
-* Fix dupplicates, the uniquing does not work because the ids are not the same
-* Add blocklist for Tags
+* Fix crazy bug where an article gets send 20 times
