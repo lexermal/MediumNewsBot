@@ -17,7 +17,7 @@ export async function addSource(con: Connection, type: SourceType, urlParts: str
 
         await con.manager.save(source);
 
-        log.info(`Successfully added source '${urlParts}' for user ${chatId}.`);
+        log.debug(`Successfully added source '${urlParts}' for user ${chatId}.`);
     }
 }
 

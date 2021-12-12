@@ -88,6 +88,10 @@ function escape(text: string) {
         .replace(/\</g, "\\<")
         .replace(/\-/g, "\\-")
         .replace(/\+/g, "\\+")
+        .replace(/\{/g, "\\{")
+        .replace(/\}/g, "\\}")
+        .replace(/\[/g, "\\[")
+        .replace(/\]/g, "\\]")
         .replace(/\!/g, "\\!");
 }
 

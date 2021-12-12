@@ -9,12 +9,87 @@ import { addSource, getSourceList } from "./utils/SourceHandler";
 import { Source, SourceType } from './entity/Source';
 import { URL } from "url";
 import { Content } from "./content/Content";
+import { TelegrafContext } from "telegraf/typings/context";
+import { addTagBlocking, getBacklistItems } from "./utils/BlacklistHandler";
+import { BlacklistedTag } from "./entity/BlacklistedTag";
 
 const bot = new Telegraf(process.env.TELEGRAF_TOKEN || "")
 const log = Log.getInstance();
 
 
 async function startBot(con: Connection) {
+
+    attachSourceHandling(bot, con);
+    attachBlacklistHandling(bot, con);
+
+    bot.hears(/\/start/, (msg) => {
+        const chatId = msg.message!.chat.id;
+
+        log.info(`The user ${chatId} joined the bot.`);
+
+        msg.replyWithMarkdown(Content.start);
+    });
+
+
+    bot.hears(/\/help/, (msg) => msg.replyWithMarkdown(Content.help))
+
+    bot.launch();
+
+    log.info("Successfully started the telegram bot!");
+    return con;
+}
+
+function attachBlacklistHandling(bot: Telegraf<TelegrafContext>, con: Connection) {
+
+    bot.hears(/\/block (.+)/, async (msg) => {
+        const tags = msg.match![1].split(" ");
+        const chatID = msg.message!.chat.id;
+
+       const preparedTags= await addTagBlocking(con, chatID, tags);
+
+        msg.replyWithMarkdown(`Successfully blocked the tag ${tags.length > 1 ? 'combination ' : ''} *${preparedTags.join(" ").replace(/\_/g, "\_")}*.\r\n` +
+            `You will not receive articles containing these tags anymore.`);
+    })
+
+    bot.hears(/\/block/, (msg) => msg.replyWithMarkdown(Content.block, Extra.webPreview(false)));
+
+    bot.hears(/\/unblock (.+)/, async (msg) => {
+        const chatId = msg.message!.chat.id;
+        const removeTagId = Number((msg.match![1]).toString().trim());
+
+        const blockedTags = await getBacklistItems(con, chatId);
+
+        if (!isValidId(msg, chatId, removeTagId, blockedTags.length)) {
+            return;
+        }
+
+        const tagToBeRemoved = blockedTags[removeTagId - 1];
+        const tagName = tagToBeRemoved.tags;
+
+        con.getRepository(BlacklistedTag).remove(tagToBeRemoved);
+
+        msg.replyWithMarkdown(`Tag *${tagName.join("* in combination with tag *").replace(/\_/g, "\\_")}* was successfully removed.`);
+    })
+
+    bot.hears(/\/blacklist/, async (msg) => {
+        const chatId = msg.message!.chat.id;
+
+        let sourceList = (await getBacklistItems(con, chatId))
+            .map((blacklistedTag, index) => `*${index + 1}*: ${blacklistedTag.tags.join(" ")}`)
+            .join("\r\n")
+            .replace(/\_/g, "\\_");
+
+        if (sourceList.length === 0) {
+            sourceList = "No blocked tags in your list.";
+        }
+
+        msg.replyWithMarkdown(`*Your blocked tags:*\r\n\r\n${sourceList}`, Extra.webPreview(false));
+    })
+
+    bot.hears(/\/unblock/, (msg) => msg.replyWithMarkdown(Content.unblock, Extra.webPreview(false)));
+}
+
+function attachSourceHandling(bot: Telegraf<TelegrafContext>, con: Connection) {
 
     bot.hears(/\/add (.+)/, async (msg) => {
         const url = msg.match![1];
@@ -49,33 +124,13 @@ async function startBot(con: Connection) {
 
     bot.hears(/\/add/, (msg) => msg.replyWithMarkdown(Content.add, Extra.webPreview(false)));
 
-    bot.hears(/\/list/, async (msg) => {
-        const chatId = msg.message!.chat.id;
-
-        let sourceList = await getFormattedSourceList(await getSourceList(con, chatId))
-
-        if (sourceList.length === 0) {
-            sourceList = "No sources are in your list.";
-        }
-
-        msg.replyWithMarkdown(`*Your medium sources:*\r\n\r\n${sourceList}`, Extra.webPreview(false));
-    })
-
     bot.hears(/\/remove (.+)/, async (msg) => {
         const chatId = msg.message!.chat.id;
         const removeSourceId = Number((msg.match![1]).toString().trim());
 
-        if (Number.isNaN(removeSourceId)) {
-            log.debug(`The user ${chatId} tried to delete a source with the invalid id '${removeSourceId}'.`)
-            msg.replyWithMarkdown("The privided id is no number.");
-            return;
-        }
-
         const sources = await getSourceList(con, chatId);
 
-        if (removeSourceId < 1 || removeSourceId > sources.length) {
-            log.debug(`The user ${chatId} tried to delete a source with an id that is not in the allowed range: '${removeSourceId}'.`)
-            msg.replyWithMarkdown(`The id ${removeSourceId} was not found.`);
+        if (!isValidId(msg, chatId, removeSourceId, sources.length)) {
             return;
         }
 
@@ -98,14 +153,32 @@ async function startBot(con: Connection) {
         msg.replyWithMarkdown(Content.remove + `\r\n\r\n\r\n*Your medium sources:*\r\n\r\n${sourceList}`);
     });
 
-    bot.hears(/\/start/, (msg) => msg.replyWithMarkdown(Content.start))
+    bot.hears(/\/list/, async (msg) => {
+        const chatId = msg.message!.chat.id;
 
-    bot.hears(/\/help/, (msg) => msg.replyWithMarkdown(Content.help))
+        let sourceList = await getFormattedSourceList(await getSourceList(con, chatId))
 
-    bot.launch();
+        if (sourceList.length === 0) {
+            sourceList = "No sources are in your list.";
+        }
 
-    log.info("Successfully started the telegram bot!");
-    return con;
+        msg.replyWithMarkdown(`*Your medium sources:*\r\n\r\n${sourceList}`, Extra.webPreview(false));
+    })
+}
+
+function isValidId(msg: TelegrafContext, chatId: number, removeSourceId: number, maxIdIndex: number) {
+    if (Number.isNaN(removeSourceId)) {
+        log.debug(`The user ${chatId} tried to delete a source with the invalid id '${removeSourceId}'.`)
+        msg.replyWithMarkdown("The privided id is no number.");
+        return false;
+    }
+
+    if (removeSourceId < 1 || removeSourceId > maxIdIndex) {
+        log.debug(`The user ${chatId} tried to delete a source with an id that is not in the allowed range: '${removeSourceId}'.`)
+        msg.replyWithMarkdown(`The id ${removeSourceId} was not found.`);
+        return false;
+    }
+    return true;
 }
 
 function getFormattedSourceList(sources: Source[]) {
