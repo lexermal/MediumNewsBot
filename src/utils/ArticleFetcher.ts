@@ -24,9 +24,9 @@ export async function fetchNewArticles(con: Connection, fetchingDuration: number
         await Promise.all(uniqueArticles.map(article => addArticle(con, article, source.chatId, source.id)));
     }))
 
-    log.debug(`Finished fetching new articles. Waiting for ${fetchingDuration - 1} minutes.`);
+    log.debug(`Finished fetching new articles. Waiting for ${fetchingDuration} minutes.`);
 
-    setTimeout(() => fetchNewArticles(con, fetchingDuration), (fetchingDuration - 1) * 60 * 1000);
+    setTimeout(() => fetchNewArticles(con, fetchingDuration), (fetchingDuration) * 60 * 1000);
 }
 
 

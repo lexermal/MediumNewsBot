@@ -45,10 +45,11 @@ createConnection({
 }).then(startBot).then(async con => {
     log.info("Starting to fetch new articles and send out unread ones.")
 
-    const updateDuration = Number(process.env.DURATION || 5); //minutes
+    const fetchingDuration = Number(process.env.FETCHING_DURATION || 5); //minutes
+    const sendingDuration = Number(process.env.SENDING_DURATION || 6); //minutes
 
-    fetchNewArticles(con, updateDuration);
-    sendNewArticles(bot, con, updateDuration);
+    fetchNewArticles(con, fetchingDuration);
+    sendNewArticles(bot, con, sendingDuration);
 }).catch(e => {
     log.error(e.message, e);
     process.exit(1);

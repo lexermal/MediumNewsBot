@@ -53,11 +53,11 @@ export async function sendNewArticles(bot: Telegraf<TelegrafContext>, con: Conne
             const message = getMessage(article.title, article.previewText, article.link, source!, tags);
 
             if (!!article.imageURL) {
-                await bot.telegram.sendPhoto(chatId, article.imageURL, { parse_mode: 'MarkdownV2', caption: message }).catch(e => {
+                await bot.telegram.sendPhoto(chatId, article.imageURL, { parse_mode: 'HTML', caption: message }).catch(e => {
                     log.error(`Could not send article ${article.articleId} because ${e.message}. The message was: ${message}`);
                 });
             } else {
-                await bot.telegram.sendMessage(chatId, message, { parse_mode: 'MarkdownV2' }).catch(e => {
+                await bot.telegram.sendMessage(chatId, message, { parse_mode: 'HTML' }).catch(e => {
                     log.error(`Could not send article ${article.articleId} because ${e.message}. The message was: ${message}`);
                 });
             }
@@ -86,46 +86,22 @@ function groupArticlesByUser(userArticles: UserArticle[]): Map<number, UserArtic
 function getMessage(title: string, teaser: string, link: string, source: Source, tags: string[]) {
     const hashtags = tags.map(c => '\#' + c).join(" ");
 
-    return `**[${escape(title)}](${escape(link)})**
-${escape(teaser)}
+    return `<b><a href="${link}">${title}</a></b>
+${teaser}
 
-From: ${getSourceLink(source)}
-${escape(hashtags)}`;
-}
-
-function escape(text: string) {
-    return text
-        .replace(/\./g, "\\.")
-        .replace(/\-/g, '\-')
-        .replace(/\_/g, "\\_")
-        .replace(/\|/g, "\\|")
-        .replace(/\(/g, "\\(")
-        .replace(/\)/g, "\\)")
-        .replace(/\>/g, "\\>")
-        .replace(/\#/g, "\\#")
-        .replace(/\</g, "\\<")
-        .replace(/\-/g, "\\-")
-        .replace(/\+/g, "\\+")
-        .replace(/\{/g, "\\{")
-        .replace(/\}/g, "\\}")
-        .replace(/\[/g, "\\[")
-        .replace(/\]/g, "\\]")
-        .replace(/\!/g, "\\!");
+From: <a href="${getSourceLink(source)}">${source.urlPart1}</a>
+${hashtags}
+`
 }
 
 export function getSourceLink(source: Source): string {
-    const urlPart = source.urlPart1
-        .replace(/\./g, '\.')
-        .replace(/\-/g, '\-');
-
-
-    let url = `https://medium.com/${urlPart}`;
+    let url = `https://medium.com/${source.urlPart1}`;
 
     if (source.type === SourceType.DOMAIN) {
-        url = urlPart;
+        return source.urlPart1
     } else if (source.type === SourceType.TAG) {
-        url = `https://medium.com/tag/${urlPart}`;
+        return `https://medium.com/tag/${source.urlPart1}`;
     }
 
-    return `[${urlPart}](${url})`;
+    return url;
 }
