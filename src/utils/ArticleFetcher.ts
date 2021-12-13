@@ -12,7 +12,7 @@ export async function fetchNewArticles(con: Connection, fetchingDuration: number
     log.info("Starting to fetch new articles.");
 
     const sourceItems = await con.getRepository(Source).find();
-    log.debug("Found " + sourceItems.length + " sources in the database.");
+    log.debug(`Found ${sourceItems.length} sources in the database.`);
 
     await Promise.all(sourceItems.map(async source => {
         const articles = await fetcher.getLatestArticles(source);

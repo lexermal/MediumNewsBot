@@ -20,7 +20,7 @@ export class Fetcher {
             case SourceType.USER:
                 return `https://medium.com/feed/@${urlParts[0]}`;
             case SourceType.DOMAIN:
-                return `https://${urlParts[0]}/feed/`;
+                return `https://${urlParts[0]}/feed`;
             case SourceType.TAG:
                 return `https://medium.com/feed/tag/${urlParts[0]}`;
             // case SourceType.TAGGED:
