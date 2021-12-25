@@ -23,8 +23,6 @@ export class Fetcher {
                 return `https://${urlParts[0]}/feed`;
             case SourceType.TAG:
                 return `https://medium.com/feed/tag/${urlParts[0]}`;
-            // case SourceType.TAGGED:
-            // return `https://medium.com/feed/${urlParts[0]}/tagged/${urlParts[1]}`;
             case SourceType.PUBLICATION:
                 return `https://medium.com/feed/${urlParts[0]}`;
             default:

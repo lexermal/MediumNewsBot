@@ -96,6 +96,6 @@ export function attachSourceHandling(bot: Telegraf<TelegrafContext>, con: Connec
 
 function getFormattedSourceList(sources: Source[]) {
     return sources
-        .map((source, index) => `*${index + 1}*: ${getSourceLink(source)}`)
+        .map((source, index) => `*${index + 1}*: [${source.urlPart1}](${getSourceLink(source)})`)
         .join("\r\n");
 }
