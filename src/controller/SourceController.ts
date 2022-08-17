@@ -14,6 +14,10 @@ class SourceController {
         return await this.getDBTable().findBy({ chatId });
     }
 
+    async getAllSources() {
+        return await this.getDBTable().find();
+    }
+
     async exists(chatId: number, urlPart: string): Promise<boolean> {
         return (await this.getDBTable().findOneBy({ urlPart1: urlPart, chatId })) != null;
     }

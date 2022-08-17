@@ -1,16 +1,16 @@
 import { DataSource } from "typeorm";
 import ArticleController from "../../controller/ArticleController";
-import { Source } from "../entity/Source";
+import SourceController from "../../controller/SourceController";
 import { Fetcher } from "./Fetcher";
 import Log from "./Logger";
 
 const log = Log.getInstance();
+const fetcher = new Fetcher();
 
-export async function fetchNewArticles(con: DataSource, fetchingDuration: number) {
-    const fetcher = new Fetcher();
+export async function fetchNewArticles(fetchingDuration: number) {
     log.info("Starting to fetch new articles.");
 
-    const sourceItems = await con.getRepository(Source).find();
+    const sourceItems = await new SourceController().getAllSources();
     log.debug(`Found ${sourceItems.length} sources in the database.`);
 
     await Promise.all(sourceItems.map(async source => {
@@ -25,6 +25,6 @@ export async function fetchNewArticles(con: DataSource, fetchingDuration: number
 
     log.debug(`Finished fetching new articles. Waiting for ${fetchingDuration} minutes.`);
 
-    setTimeout(() => fetchNewArticles(con, fetchingDuration), (fetchingDuration) * 60 * 1000);
+    setTimeout(() => fetchNewArticles(fetchingDuration), (fetchingDuration) * 60 * 1000);
 }
 

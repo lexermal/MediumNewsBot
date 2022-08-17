@@ -46,7 +46,7 @@ DatabaseController.initDB().then(() => {
     const fetchingDuration = Number(process.env.FETCHING_DURATION || 5); //minutes
     const sendingDuration = Number(process.env.SENDING_DURATION || 6); //minutes
 
-    fetchNewArticles(con, fetchingDuration);
+    fetchNewArticles(fetchingDuration);
     sendNewArticles(bot, con, sendingDuration);
 }).catch(e => {
     log.error(e.message, e);
