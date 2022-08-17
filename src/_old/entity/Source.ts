@@ -22,9 +22,9 @@ export class Source {
         return [this.urlPart1, this.urlPart2];
     }
 
-    setUrlparts(urlParts: string[]) {
-        this.urlPart1 = urlParts[0];
-        this.urlPart2 = urlParts[1] || "";
+    setUrlpart(part: string) {
+        this.urlPart1 = part;
+        this.urlPart2 = "";
     }
 }
 

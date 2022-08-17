@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { Telegraf } from "telegraf";
 import { DataSource } from 'typeorm';
+import DatabaseController from "./controller/DatabaseController";
 import { attachBlacklistHandling } from "./_old/bot/Blacklist";
 import { attachSourceHandling } from "./_old/bot/Source";
 import { Content } from "./_old/content/Content";
@@ -13,8 +14,7 @@ const log = Log.getInstance();
 
 
 async function startBot(con: DataSource) {
-
-    attachSourceHandling(bot, con);
+    attachSourceHandling(bot);
     attachBlacklistHandling(bot, con);
 
     bot.hears(/\/start/, (msg) => {
@@ -37,12 +37,10 @@ async function startBot(con: DataSource) {
 
 log.info("Starting the telegram bot.");
 
-new DataSource({
-    type: "sqlite",
-    database: __dirname + '/../db/database.sqlite',
-    entities: [__dirname + '/entity/**/*.ts'],
-    synchronize: true,
-}).initialize().then(startBot).then(async con => {
+DatabaseController.initDB().then(() => {
+    return DatabaseController.getConnection();
+}).then(startBot).then(async con => {
+
     log.info("Starting to fetch new articles and send out unread ones.");
 
     const fetchingDuration = Number(process.env.FETCHING_DURATION || 5); //minutes

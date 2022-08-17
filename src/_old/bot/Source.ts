@@ -1,16 +1,14 @@
-import { DataSource } from "typeorm";
 import { URL } from "url";
 import { Content } from "../content/Content";
-import { SourceType, Source } from "../entity/Source";
-import Log from "../utils/Logger";
+import { Source } from "../entity/Source";
 import { getSourceLink } from "../utils/ArticleSender";
 import { isValidHttpUrl, getSource } from "../utils/SourceTypeAnalyser";
-import { isValidId } from "./Utils";
-import { addSource, getSourceList } from "../handler/SourceHandler";
 import { Fetcher } from "../utils/Fetcher";
 import { Telegraf, Context } from "telegraf";
+import SourceController from "../../controller/SourceController";
 
-export function attachSourceHandling(bot: Telegraf<Context>, con: DataSource) {
+export function attachSourceHandling(bot: Telegraf<Context>) {
+    const sc = new SourceController();
 
     bot.hears(/\/add (.+)/, async (msg) => {
         const url = msg.match![1];
@@ -29,22 +27,7 @@ export function attachSourceHandling(bot: Telegraf<Context>, con: DataSource) {
             return;
         }
 
-        switch (sourceType) {
-            case SourceType.DOMAIN:
-                addSource(con, SourceType.DOMAIN, [urlPart], chatID || 0);
-                break;
-            case SourceType.TAG:
-                addSource(con, SourceType.TAG, [urlPart], chatID || 0);
-                break;
-            case SourceType.USER:
-                addSource(con, SourceType.USER, [urlPart], chatID || 0);
-                break;
-            case SourceType.PUBLICATION:
-                addSource(con, SourceType.PUBLICATION, [urlPart], chatID || 0);
-                break;
-            default:
-                throw new Error(`Unknown sourcetype '${sourceType}'.`);
-        }
+        sc.addSource(chatID, sourceType, urlPart);
 
         msg.replyWithMarkdown(`*${urlPart}* of type *${sourceType}* ${Content.added}`);
     });
@@ -53,24 +36,18 @@ export function attachSourceHandling(bot: Telegraf<Context>, con: DataSource) {
 
     bot.hears(/\/remove (.+)/, async (msg) => {
         const chatId = msg.message!.chat.id;
-        const removeSourceId = Number((msg.match![1]).toString().trim());
+        const removeSourceId = (msg.match![1]).toString().trim();
 
-        const sources = await getSourceList(con, chatId);
-
-        if (!isValidId(msg, chatId, removeSourceId, sources.length, Log.getInstance())) {
-            return;
-        }
-
-        const sourceToBeRemoved = sources[removeSourceId - 1];
-        const sourceName = sourceToBeRemoved.urlPart1;
-
-        con.getRepository(Source).remove(sourceToBeRemoved);
-        msg.replyWithMarkdown(`*${sourceName}* was successfully removed.`);
+        sc.removeSource(chatId, removeSourceId).then(sourceName => {
+            msg.replyWithMarkdown(`*${sourceName}* was successfully removed.`);
+        }).catch(error => {
+            msg.replyWithMarkdown(error.message);
+        });
     });
 
     bot.hears(/\/remove/, async (msg) => {
         const chatId = msg.message!.chat.id;
-        const sources = await getSourceList(con, chatId);
+        const sources = await sc.getSources(chatId);
 
         let sourceList = getFormattedSourceList(sources);
         if (sourceList.length === 0) {
@@ -83,7 +60,7 @@ export function attachSourceHandling(bot: Telegraf<Context>, con: DataSource) {
     bot.hears(/\/list/, async (msg) => {
         const chatId = msg.message!.chat.id;
 
-        let sourceList = await getFormattedSourceList(await getSourceList(con, chatId));
+        let sourceList = await getFormattedSourceList(await sc.getSources(chatId));
 
         if (sourceList.length === 0) {
             sourceList = "No sources are in your list.";
