@@ -1,12 +1,12 @@
 import "reflect-metadata";
 import { Telegraf } from "telegraf";
 import { DataSource } from 'typeorm';
-import { attachBlacklistHandling } from "./bot/Blacklist";
-import { attachSourceHandling } from "./bot/Source";
-import { Content } from "./content/Content";
-import { fetchNewArticles } from "./utils/ArticleFetcher";
-import { sendNewArticles } from "./utils/ArticleSender";
-import Log from "./utils/Logger";
+import { attachBlacklistHandling } from "./_old/bot/Blacklist";
+import { attachSourceHandling } from "./_old/bot/Source";
+import { Content } from "./_old/content/Content";
+import { fetchNewArticles } from "./_old/utils/ArticleFetcher";
+import { sendNewArticles } from "./_old/utils/ArticleSender";
+import Log from "./_old/utils/Logger";
 
 const bot = new Telegraf(process.env.TELEGRAF_TOKEN || "");
 const log = Log.getInstance();
