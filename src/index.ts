@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import Telegraf from 'telegraf';
+import { Telegraf } from "telegraf";
 import { DataSource } from 'typeorm';
 import { attachBlacklistHandling } from "./bot/Blacklist";
 import { attachSourceHandling } from "./bot/Source";

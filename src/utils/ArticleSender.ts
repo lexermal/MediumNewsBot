@@ -1,5 +1,4 @@
-import Telegraf from "telegraf";
-import { TelegrafContext } from "telegraf/typings/context";
+import { Context, Telegraf } from "telegraf";
 import { DataSource, In, MoreThan } from "typeorm";
 import { Article } from "../entity/Article";
 import { BlacklistedTag } from "../entity/BlacklistedTag";
@@ -9,7 +8,7 @@ import Log from "./Logger";
 
 const log = Log.getInstance();
 
-export async function sendNewArticles(bot: Telegraf<TelegrafContext>, con: DataSource, sendingDuration: number) {
+export async function sendNewArticles(bot: Telegraf<Context>, con: DataSource, sendingDuration: number) {
     log.info("Start sending new articles.");
 
     const timestamp = new Date(Date.now() - sendingDuration * 60 * 1000); //now minus x minutes

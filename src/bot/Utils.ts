@@ -1,7 +1,7 @@
-import { TelegrafContext } from "telegraf/typings/context";
+import { Context } from "telegraf";
 import Log from "../utils/Logger";
 
-export function isValidId(msg: TelegrafContext, chatId: number, removeSourceId: number, maxIdIndex: number, log: Log) {
+export function isValidId(msg: Context, chatId: number, removeSourceId: number, maxIdIndex: number, log: Log) {
     if (Number.isNaN(removeSourceId)) {
         log.debug(`The user ${chatId} tried to delete a source with the invalid id '${removeSourceId}'.`)
         msg.replyWithMarkdown("The privided id is no number.");

@@ -1,13 +1,12 @@
-import Telegraf, { Extra } from "telegraf";
-import { TelegrafContext } from "telegraf/typings/context";
-import { Connection } from "typeorm";
 import { Content } from "../content/Content";
 import { BlacklistedTag } from "../entity/BlacklistedTag";
 import Log from "../utils/Logger";
 import { addTagBlocking, getBacklistItems } from "../handler/BlacklistHandler";
 import { isValidId } from "./Utils";
+import { DataSource } from "typeorm";
+import { Telegraf, Context } from "telegraf";
 
-export function attachBlacklistHandling(bot: Telegraf<TelegrafContext>, con: Connection) {
+export function attachBlacklistHandling(bot: Telegraf<Context>, con: DataSource) {
 
     bot.hears(/\/block (.+)/, async (msg) => {
         const tags = msg.match![1].split(" ");
@@ -17,9 +16,9 @@ export function attachBlacklistHandling(bot: Telegraf<TelegrafContext>, con: Con
 
         msg.replyWithMarkdown(`Successfully blocked the tag ${tags.length > 1 ? 'combination ' : ''} *${preparedTags.join(" ").replace(/\_/g, "\_")}*.\r\n` +
             `You will not receive articles containing these tags anymore.`);
-    })
+    });
 
-    bot.hears(/\/block/, (msg) => msg.replyWithMarkdown(Content.block, Extra.webPreview(false)));
+    bot.hears(/\/block/, (msg) => msg.replyWithMarkdown(Content.block, { disable_web_page_preview: false }));
 
     bot.hears(/\/unblock (.+)/, async (msg) => {
         const chatId = msg.message!.chat.id;
@@ -37,7 +36,7 @@ export function attachBlacklistHandling(bot: Telegraf<TelegrafContext>, con: Con
         con.getRepository(BlacklistedTag).remove(tagToBeRemoved);
 
         msg.replyWithMarkdown(`Tag *${tagName.join("* in combination with tag *").replace(/\_/g, "\\_")}* was successfully removed.`);
-    })
+    });
 
     bot.hears(/\/blacklist/, async (msg) => {
         const chatId = msg.message!.chat.id;
@@ -51,8 +50,8 @@ export function attachBlacklistHandling(bot: Telegraf<TelegrafContext>, con: Con
             sourceList = "No blocked tags in your list.";
         }
 
-        msg.replyWithMarkdown(`*Your blocked tags:*\r\n\r\n${sourceList}`, Extra.webPreview(false));
-    })
+        msg.replyWithMarkdown(`*Your blocked tags:*\r\n\r\n${sourceList}`, { disable_web_page_preview: false });
+    });
 
-    bot.hears(/\/unblock/, (msg) => msg.replyWithMarkdown(Content.unblock, Extra.webPreview(false)));
+    bot.hears(/\/unblock/, (msg) => msg.replyWithMarkdown(Content.unblock, { disable_web_page_preview: false }));
 }

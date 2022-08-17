@@ -1,5 +1,3 @@
-import Telegraf, { Extra } from "telegraf";
-import { TelegrafContext } from "telegraf/typings/context";
 import { DataSource } from "typeorm";
 import { URL } from "url";
 import { Content } from "../content/Content";
@@ -10,8 +8,9 @@ import { isValidHttpUrl, getSource } from "../utils/SourceTypeAnalyser";
 import { isValidId } from "./Utils";
 import { addSource, getSourceList } from "../handler/SourceHandler";
 import { Fetcher } from "../utils/Fetcher";
+import { Telegraf, Context } from "telegraf";
 
-export function attachSourceHandling(bot: Telegraf<TelegrafContext>, con: DataSource) {
+export function attachSourceHandling(bot: Telegraf<Context>, con: DataSource) {
 
     bot.hears(/\/add (.+)/, async (msg) => {
         const url = msg.match![1];
@@ -50,7 +49,7 @@ export function attachSourceHandling(bot: Telegraf<TelegrafContext>, con: DataSo
         msg.replyWithMarkdown(`*${urlPart}* of type *${sourceType}* ${Content.added}`);
     });
 
-    bot.hears(/\/add/, (msg) => msg.replyWithMarkdown(Content.add, Extra.webPreview(false)));
+    bot.hears(/\/add/, (msg) => msg.replyWithMarkdown(Content.add, { disable_web_page_preview: false }));
 
     bot.hears(/\/remove (.+)/, async (msg) => {
         const chatId = msg.message!.chat.id;
@@ -90,7 +89,7 @@ export function attachSourceHandling(bot: Telegraf<TelegrafContext>, con: DataSo
             sourceList = "No sources are in your list.";
         }
 
-        msg.replyWithMarkdown(`*Your medium sources:*\r\n\r\n${sourceList}`, Extra.webPreview(false));
+        msg.replyWithMarkdown(`*Your medium sources:*\r\n\r\n${sourceList}`, { disable_web_page_preview: false });
     });
 }
 
