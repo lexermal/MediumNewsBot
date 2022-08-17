@@ -1,18 +1,18 @@
 import "reflect-metadata";
-import Log from './utils/Logger';
-import Telegraf from 'telegraf'
-import { Connection, createConnection } from 'typeorm';
-import { sendNewArticles } from './utils/ArticleSender';
-import { fetchNewArticles } from './utils/ArticleFetcher';
-import { Content } from "./content/Content";
+import Telegraf from 'telegraf';
+import { DataSource } from 'typeorm';
 import { attachBlacklistHandling } from "./bot/Blacklist";
 import { attachSourceHandling } from "./bot/Source";
+import { Content } from "./content/Content";
+import { fetchNewArticles } from "./utils/ArticleFetcher";
+import { sendNewArticles } from "./utils/ArticleSender";
+import Log from "./utils/Logger";
 
-const bot = new Telegraf(process.env.TELEGRAF_TOKEN || "")
+const bot = new Telegraf(process.env.TELEGRAF_TOKEN || "");
 const log = Log.getInstance();
 
 
-async function startBot(con: Connection) {
+async function startBot(con: DataSource) {
 
     attachSourceHandling(bot, con);
     attachBlacklistHandling(bot, con);
@@ -26,7 +26,7 @@ async function startBot(con: Connection) {
     });
 
 
-    bot.hears(/\/help/, (msg) => msg.replyWithMarkdown(Content.help))
+    bot.hears(/\/help/, (msg) => msg.replyWithMarkdown(Content.help));
 
     bot.launch();
 
@@ -37,13 +37,13 @@ async function startBot(con: Connection) {
 
 log.info("Starting the telegram bot.");
 
-createConnection({
+new DataSource({
     type: "sqlite",
     database: __dirname + '/../db/database.sqlite',
     entities: [__dirname + '/entity/**/*.ts'],
     synchronize: true,
-}).then(startBot).then(async con => {
-    log.info("Starting to fetch new articles and send out unread ones.")
+}).initialize().then(startBot).then(async con => {
+    log.info("Starting to fetch new articles and send out unread ones.");
 
     const fetchingDuration = Number(process.env.FETCHING_DURATION || 5); //minutes
     const sendingDuration = Number(process.env.SENDING_DURATION || 6); //minutes
@@ -53,4 +53,4 @@ createConnection({
 }).catch(e => {
     log.error(e.message, e);
     process.exit(1);
-})
+});

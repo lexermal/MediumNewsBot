@@ -1,6 +1,6 @@
 import Telegraf, { Extra } from "telegraf";
 import { TelegrafContext } from "telegraf/typings/context";
-import { Connection } from "typeorm";
+import { DataSource } from "typeorm";
 import { URL } from "url";
 import { Content } from "../content/Content";
 import { SourceType, Source } from "../entity/Source";
@@ -11,7 +11,7 @@ import { isValidId } from "./Utils";
 import { addSource, getSourceList } from "../handler/SourceHandler";
 import { Fetcher } from "../utils/Fetcher";
 
-export function attachSourceHandling(bot: Telegraf<TelegrafContext>, con: Connection) {
+export function attachSourceHandling(bot: Telegraf<TelegrafContext>, con: DataSource) {
 
     bot.hears(/\/add (.+)/, async (msg) => {
         const url = msg.match![1];
@@ -22,7 +22,7 @@ export function attachSourceHandling(bot: Telegraf<TelegrafContext>, con: Connec
             return;
         }
 
-        const [sourceType, urlPart] = getSource(new URL(url))
+        const [sourceType, urlPart] = getSource(new URL(url));
 
         if (!await Fetcher.isFetchable(Fetcher.getURL(sourceType, [urlPart]))) {
             msg.replyWithMarkdown(`The url should be of type ${sourceType} but the RSS feed was not fetchable.` +
@@ -44,11 +44,11 @@ export function attachSourceHandling(bot: Telegraf<TelegrafContext>, con: Connec
                 addSource(con, SourceType.PUBLICATION, [urlPart], chatID || 0);
                 break;
             default:
-                throw new Error(`Unknown sourcetype '${sourceType}'.`)
+                throw new Error(`Unknown sourcetype '${sourceType}'.`);
         }
 
         msg.replyWithMarkdown(`*${urlPart}* of type *${sourceType}* ${Content.added}`);
-    })
+    });
 
     bot.hears(/\/add/, (msg) => msg.replyWithMarkdown(Content.add, Extra.webPreview(false)));
 
@@ -67,13 +67,13 @@ export function attachSourceHandling(bot: Telegraf<TelegrafContext>, con: Connec
 
         con.getRepository(Source).remove(sourceToBeRemoved);
         msg.replyWithMarkdown(`*${sourceName}* was successfully removed.`);
-    })
+    });
 
     bot.hears(/\/remove/, async (msg) => {
         const chatId = msg.message!.chat.id;
         const sources = await getSourceList(con, chatId);
 
-        let sourceList = getFormattedSourceList(sources)
+        let sourceList = getFormattedSourceList(sources);
         if (sourceList.length === 0) {
             sourceList = "No sources are in your list.";
         }
@@ -84,14 +84,14 @@ export function attachSourceHandling(bot: Telegraf<TelegrafContext>, con: Connec
     bot.hears(/\/list/, async (msg) => {
         const chatId = msg.message!.chat.id;
 
-        let sourceList = await getFormattedSourceList(await getSourceList(con, chatId))
+        let sourceList = await getFormattedSourceList(await getSourceList(con, chatId));
 
         if (sourceList.length === 0) {
             sourceList = "No sources are in your list.";
         }
 
         msg.replyWithMarkdown(`*Your medium sources:*\r\n\r\n${sourceList}`, Extra.webPreview(false));
-    })
+    });
 }
 
 function getFormattedSourceList(sources: Source[]) {

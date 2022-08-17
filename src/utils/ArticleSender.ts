@@ -1,6 +1,6 @@
 import Telegraf from "telegraf";
 import { TelegrafContext } from "telegraf/typings/context";
-import { Connection, In, MoreThan } from "typeorm";
+import { DataSource, In, MoreThan } from "typeorm";
 import { Article } from "../entity/Article";
 import { BlacklistedTag } from "../entity/BlacklistedTag";
 import { Source, SourceType } from "../entity/Source";
@@ -9,13 +9,13 @@ import Log from "./Logger";
 
 const log = Log.getInstance();
 
-export async function sendNewArticles(bot: Telegraf<TelegrafContext>, con: Connection, sendingDuration: number) {
+export async function sendNewArticles(bot: Telegraf<TelegrafContext>, con: DataSource, sendingDuration: number) {
     log.info("Start sending new articles.");
 
     const timestamp = new Date(Date.now() - sendingDuration * 60 * 1000); //now minus x minutes
 
     const userArticles = await con.manager.find(UserArticle, {
-        where: { added: MoreThan(timestamp) }
+        where: { added: MoreThan(timestamp.getTime()) }
     });
 
     log.debug(`Found ${userArticles.length} new unsent articles.`);
@@ -25,7 +25,7 @@ export async function sendNewArticles(bot: Telegraf<TelegrafContext>, con: Conne
     log.debug(groupedEntries.size + " users will get new articles.");
 
     groupedEntries.forEach(async (userArticles, chatId) => {
-        const blockedTags = (await con.manager.find(BlacklistedTag, { chatId })).map(blacklistedTags => blacklistedTags.tags.join(","));
+        const blockedTags = (await con.manager.findBy(BlacklistedTag, { chatId })).map(blacklistedTags => blacklistedTags.tags.join(","));
 
         const unseenArticles = await con.manager.getRepository(Article).find({
             where: { articleId: In(userArticles.map(ua => ua.articleId)) }
@@ -38,8 +38,8 @@ export async function sendNewArticles(bot: Telegraf<TelegrafContext>, con: Conne
             const blockedTagIndex = tags.some(tag => blockedTags.indexOf(tag) >= 0);
 
             //tags are inside because it needs to be tested if tagcombinations like '#health and #care' get really blocked
-            console.log("blocked tags", blockedTags)
-            console.log("tags used in article", tags.join(","))
+            console.log("blocked tags", blockedTags);
+            console.log("tags used in article", tags.join(","));
 
             if (blockedTagIndex) {
                 log.debug(`Blocked an article with the tags '${tags.join(" ")}' from getting send because the blocked tag ${blockedTags} matched.`);
@@ -48,7 +48,7 @@ export async function sendNewArticles(bot: Telegraf<TelegrafContext>, con: Conne
 
             const currentUserArticle = userArticles.filter(ua => ua.articleId === article.articleId)[0];
 
-            const source = await con.manager.findOne(Source, currentUserArticle.sourceId);
+            const source = await con.manager.findOneBy(Source, { id: currentUserArticle.sourceId });
 
             const message = getMessage(article.title, article.previewText, article.link, source!, tags);
 
@@ -64,9 +64,9 @@ export async function sendNewArticles(bot: Telegraf<TelegrafContext>, con: Conne
         });
 
         log.debug(`Sent ${userArticles.length} unread articles to ${chatId}.`);
-    })
+    });
 
-    log.debug(`Finished sending all unseen articles. Waiting ${sendingDuration} minutes.`)
+    log.debug(`Finished sending all unseen articles. Waiting ${sendingDuration} minutes.`);
     setTimeout(() => sendNewArticles(bot, con, sendingDuration), sendingDuration * 60 * 1000);
 }
 
@@ -91,14 +91,14 @@ ${teaser}
 
 From: <a href="${getSourceLink(source)}">${source.urlPart1}</a>
 ${hashtags}
-`
+`;
 }
 
 export function getSourceLink(source: Source): string {
     let url = `https://medium.com/${source.urlPart1}`;
 
     if (source.type === SourceType.DOMAIN) {
-        return source.urlPart1
+        return source.urlPart1;
     } else if (source.type === SourceType.TAG) {
         return `https://medium.com/tag/${source.urlPart1}`;
     }
