@@ -16,12 +16,19 @@ export class ArticleFetcher {
 
     public async getLatestArticles(source: Source): Promise<Article[]> {
         const url = SourceController.getFeedUrl(source);
+        const sleep = (s: number) => new Promise(r => setTimeout(r, s * 1000));
 
-        return new Parser().parseURL(url)
-            .catch(e => {
+        return await new Parser().parseURL(url)
+            .catch(async e => {
                 Log.error(`The following error accured when fetching articles from ${url}: ${e.message}`, e);
+
+                if (e.code === "ENOTFOUND") {
+                    Log.debug(`Trying again to fetch ${url}.`);
+                    await sleep(10);
+                    return await new Parser().parseURL(url).catch(() => ({ items: [] }));
+                }
                 return { items: [] };
-            }).then(feed => {
+            }).then(async feed => {
                 const posts = feed.items.filter(item => typeof item.categories !== 'undefined' && item.categories.length > 0);
 
                 return posts.map(this.convertToArticle);
@@ -48,4 +55,6 @@ export class ArticleFetcher {
 
         return article;
     }
+
+
 }
