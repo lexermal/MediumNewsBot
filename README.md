@@ -1,29 +1,34 @@
 # Medium News Bot
 
-Read Medium articles on Telegram!
+Never miss articles of your favorite publishers!
 
-Try it out: [mediumNewsBot](https://telegram.me/keiwosle_new_bot)
+Try it out: [mediumNewsBot](t.me/MediumListenerBot)
 
 
 #### List of available commands:
 
-- ***/add*** `<url>` - Adds the publisher/domain/tag/user to your subscriped sources.
-  Hint: If you subscribe to tags, you will get the latest news of that tag. That is usually very much.
+- ***/add*** `<url>` - Subscribe to a medium author, publisher, tag or domain.
 
-- ***/list*** - Shows all your subscriped sources.
+- ***/list*** - Get a list of all subscribed sources.
 
-- ***/remove*** `<id>` - Removes the publisher/domain/tag to your subscriped sources.
-  
+- ***/remove*** `<id>` - Remove a source from your subscribed authors, publishers, tags or domains.
+
 - ***/block*** `<tag or tag combinations>` - Blocks articles that contain a curtain tag or combination of tags.
 
-- ***/unblock***`<id>` - Unblocks articles that contain a curtain tag or combination of tags.
+- ***/unblock*** `<id>` - Removes the tag from the blacklist.
 
 - ***/blacklist*** - Get a list of blocked tags.
 
+- ***/help*** - Show all available commands.
+
+
 ## Build the container
 1. docker build . -t mediumnewsbot
-2. docker run -d mediumnewsbot 
+2. docker run -d mediumnewsbot
 
 ## Todo
-* seen proxy for knowing which article the user really reads. 
-* Fix crazy bug where an article gets send 20 times
+* Update the database schema
+
+## Copyright
+
+Copyright by Lexermal

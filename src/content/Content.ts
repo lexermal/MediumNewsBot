@@ -4,9 +4,9 @@ export class Content {
 
 /add ***<url>*** - Subscribe to a medium author, publisher, tag or domain.
 
-/list - Get a list of all subscriped sources.
+/list - Get a list of all subscribed sources.
 
-/remove ***<id>*** - Remove a source from your subscriped authors, publishers, tags or domains.
+/remove ***<id>*** - Remove a source from your subscribed authors, publishers, tags or domains.
 
 /block ***<tag or tag combinations>*** - Blocks articles that contain a curtain tag or combination of tags.
 
@@ -22,7 +22,7 @@ This bot is powered by [Lexermal](https://github.com/lexermal).
 
     public static start = `
     ⚡️ *Medium News Bot* ⚡️
-    Never miss Medium articles of your favorite publishers!
+    Never miss articles of your favorite publishers!
 
     `+ Content.help;
 
