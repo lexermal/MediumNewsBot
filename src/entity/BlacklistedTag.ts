@@ -9,6 +9,6 @@ export class BlacklistedTag {
     @Column()
     chatId: number;
 
-    @Column("simple-array")
-    tags: string[];
+    @Column()
+    tag: string;
 }

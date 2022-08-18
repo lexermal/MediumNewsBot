@@ -21,7 +21,7 @@ class _SourceController {
     }
 
     async exists(chatId: number, urlPart: string): Promise<boolean> {
-        return (await this.getDBTable().findOneBy({ urlPart1: urlPart, chatId })) != null;
+        return (await this.getDBTable().findOneBy({ urlPart, chatId })) != null;
     }
 
     async addSource(chatId: number, type: SourceType, urlPart: string) {
@@ -32,7 +32,7 @@ class _SourceController {
 
             source.type = type;
             source.chatId = chatId;
-            source.setUrlpart(urlPart);
+            source.urlPart = urlPart;
 
             await this.getDBTable().save(source);
 
@@ -49,7 +49,7 @@ class _SourceController {
         const item = (await this.getSources(chatID))[Number(index) - 1];
 
         this.getDBTable().remove(item);
-        return item.urlPart1; //=name of source
+        return item.urlPart; //=name of source
     }
 
     async isValidId(chatId: number, id: string) {
@@ -70,13 +70,13 @@ class _SourceController {
     getFeedUrl(source: Source) {
         switch (source.type) {
             case SourceType.USER:
-                return `https://medium.com/feed/@${source.urlPart1}`;
+                return `https://medium.com/feed/@${source.urlPart}`;
             case SourceType.DOMAIN:
-                return `https://${source.urlPart1}/feed`;
+                return `https://${source.urlPart}/feed`;
             case SourceType.TAG:
-                return `https://medium.com/feed/tag/${source.urlPart1}`;
+                return `https://medium.com/feed/tag/${source.urlPart}`;
             case SourceType.PUBLICATION:
-                return `https://medium.com/feed/${source.urlPart1}`;
+                return `https://medium.com/feed/${source.urlPart}`;
             default:
                 throw new Error(`Unknown fetchingtype '${source.type}'`);
         }
@@ -105,13 +105,13 @@ class _SourceController {
     getUrlOfSource(source: Source) {
         switch (source.type) {
             case SourceType.USER:
-                return `https://medium.com/@${source.urlPart1}`;
+                return `https://medium.com/@${source.urlPart}`;
             case SourceType.DOMAIN:
-                return `https://${source.urlPart1}`;
+                return `https://${source.urlPart}`;
             case SourceType.TAG:
-                return `https://medium.com/tag/${source.urlPart1}`;
+                return `https://medium.com/tag/${source.urlPart}`;
             case SourceType.PUBLICATION:
-                return `https://medium.com/${source.urlPart1}`;
+                return `https://medium.com/${source.urlPart}`;
             default:
                 throw new Error(`Unknown fetchingtype '${source.type}'`);
         }

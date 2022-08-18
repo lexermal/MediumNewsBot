@@ -38,7 +38,7 @@ export default class ArticleSender {
 
         return `<b><a href="${article.link}">${article.title}</a></b>\n` +
             article.previewText +
-            `\n\nFrom: <a href="${sourceUrl}">${source.urlPart1}</a>\n` +
+            `\n\nFrom: <a href="${sourceUrl}">${source.urlPart}</a>\n` +
             hashtags;
     }
 
@@ -57,7 +57,7 @@ export default class ArticleSender {
     }
 
     async getNonBlockedArticles(chatId: number, articles: Article[]) {
-        const blockedTags = (await BlacklistController.getBlockedTags(chatId)).map(tag => tag.tags[0]);
+        const blockedTags = (await BlacklistController.getBlockedTags(chatId)).map(tag => tag.tag);
 
         return articles.filter(article => {
             return !blockedTags.some(blockedTag => article.getTags().includes(blockedTag));

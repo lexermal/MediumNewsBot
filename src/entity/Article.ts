@@ -29,14 +29,14 @@ export class Article {
     imageURL: string;
 
     @Column()
-    categories: string;
+    tags: string;
 
 
     public setTags(tags: string[]) {
-        this.categories = convertTagToCheckableString(tags.join(";"));
+        this.tags = convertTagToCheckableString(tags.join(";"));
     }
 
     public getTags() {
-        return this.categories.split(";");
+        return this.tags.split(";");
     }
 }

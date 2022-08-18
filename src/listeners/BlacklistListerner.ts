@@ -17,7 +17,7 @@ export function attachBlacklistListeners() {
     BotController.addListener("unblock", true, async (chatId, removeTagId) => {
 
         return BlacklistController.removeTag(chatId, removeTagId).then(tagName => {
-            return `Tag *${tagName}* was successfully removed.`;
+            return `Blocked tag *${tagName}* was successfully removed.`;
         }).catch(error => {
             return error.message;
         });
@@ -38,6 +38,6 @@ export function attachBlacklistListeners() {
 
 function getFormattedList(tags: BlacklistedTag[]) {
     return tags
-        .map((tag, index) => `*${index + 1}*: ${tag.tags[0]}`)
+        .map((tag, index) => `*${index + 1}*: ${tag.tag}`)
         .join("\r\n");
 }

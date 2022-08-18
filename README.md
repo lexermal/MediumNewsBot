@@ -2,7 +2,7 @@
 
 Never miss articles of your favorite publishers!
 
-Try it out: [mediumNewsBot](t.me/MediumListenerBot)
+Try it out: [MediumNewsBot](t.me/MediumListenerBot)
 
 
 #### List of available commands:
@@ -26,8 +26,6 @@ Try it out: [mediumNewsBot](t.me/MediumListenerBot)
 1. ```docker build . -t mediumnewsbot```
 2. ```docker compose up -d```
 
-## Todo
-* Update the database schema
 
 ## Copyright
 Copyright by Lexermal

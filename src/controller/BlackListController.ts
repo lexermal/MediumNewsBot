@@ -10,7 +10,7 @@ class _BacklistController {
     }
 
     async exists(chatId: number, tag: string) {
-        return (await this.getDBTable().findOneBy({ tags: tag, chatId })) != null;
+        return (await this.getDBTable().findOneBy({ tag, chatId })) != null;
     }
 
     async getBlockedTags(chatId: number) {
@@ -26,7 +26,7 @@ class _BacklistController {
             const tagToBeBlocked = new BlacklistedTag();
 
             tagToBeBlocked.chatId = chatId;
-            tagToBeBlocked.tags = [tagString];
+            tagToBeBlocked.tag = tagString;
 
 
             await this.getDBTable().save(tagToBeBlocked);
@@ -46,7 +46,7 @@ class _BacklistController {
 
         this.getDBTable().remove(item);
 
-        return convertToReadableTag(item.tags[0]); //=name of tag
+        return convertToReadableTag(item.tag); //=name of tag
     }
 
     async isValidId(chatId: number, id: string) {

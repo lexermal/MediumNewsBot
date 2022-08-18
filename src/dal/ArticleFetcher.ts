@@ -48,7 +48,7 @@ export class ArticleFetcher {
 
         if (item.content) {
             const htmlObject = parse(item.content);
-            const imageObject = (htmlObject.firstChild.childNodes[0].childNodes[0].childNodes[0] as HTMLElement);
+            const imageObject = (htmlObject.firstChild?.childNodes[0]?.childNodes[0]?.childNodes[0] as HTMLElement | null);
 
             article.imageURL = imageObject?.attrs?.src || "";
         }

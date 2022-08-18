@@ -10,28 +10,16 @@ export class Source {
     chatId: number;
 
     @Column()
-    urlPart1: string;
-
-    @Column()
-    urlPart2: string;
+    urlPart: string;
 
     @Column()
     type: SourceType;
-
-    get urlParts(): string[] {
-        return [this.urlPart1, this.urlPart2];
-    }
-
-    setUrlpart(part: string) {
-        this.urlPart1 = part;
-        this.urlPart2 = "";
-    }
 
     setParameters(chatId: number, type: SourceType, urlPart: string) {
         this.chatId = chatId;
         this.type = type;
 
-        this.setUrlpart(urlPart);
+        this.urlPart = urlPart;
 
         return this;
     }

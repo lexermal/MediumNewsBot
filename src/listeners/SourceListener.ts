@@ -19,9 +19,9 @@ export function attachSourceListeners() {
                 ` Are you sure you provided a url to a blog that uses the Medium.com CMS?`;
         }
 
-        SourceController.addSource(chatId, source.type, source.urlPart1);
+        SourceController.addSource(chatId, source.type, source.urlPart);
 
-        return `*${source.urlPart1}* of type *${source.type}* ${Content.added}`;
+        return `The ${source.type} *${source.urlPart}* ${Content.added}`;
     });
 
     BotController.addListener("add", false, () => Content.add, { disablePreview: true });
@@ -58,7 +58,7 @@ async function getSourceList(chatId: number) {
 
 function getFormattedList(sources: Source[]) {
     return sources
-        .map((source, index) => `*${index + 1}*: [${source.urlPart1}](${SourceController.getUrlOfSource(source)})`)
+        .map((source, index) => `*${index + 1}*: [${source.urlPart}](${SourceController.getUrlOfSource(source)})`)
         .join("\r\n");
 }
 
