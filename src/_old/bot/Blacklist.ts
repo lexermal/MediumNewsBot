@@ -15,7 +15,7 @@ export function attachBlacklistHandling(con: DataSource) {
             `You will not receive articles containing these tags anymore.`;
     });
 
-    BotController.addListener("block", false, () => Content.block, { disable_web_page_preview: true });
+    BotController.addListener("block", false, () => Content.block, { disablePreview: true });
 
     BotController.addListener("unblock", true, async (chatId, removeTagId) => {
         const blockedTags = await getBacklistItems(con, chatId);
@@ -43,7 +43,7 @@ export function attachBlacklistHandling(con: DataSource) {
         }
 
         return `*Your blocked tags:*\r\n\r\n${sourceList}`;
-    }, { disable_web_page_preview: true });
+    }, { disablePreview: true });
 
-    BotController.addListener("unblock", false, () => Content.unblock, { disable_web_page_preview: true });
+    BotController.addListener("unblock", false, () => Content.unblock, { disablePreview: true });
 }

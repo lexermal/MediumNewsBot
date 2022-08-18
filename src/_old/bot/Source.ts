@@ -27,7 +27,7 @@ export function attachSourceHandling() {
         return `*${urlPart}* of type *${sourceType}* ${Content.added}`;
     });
 
-    BotController.addListener("add", false, () => Content.add, { disable_web_page_preview: true });
+    BotController.addListener("add", false, () => Content.add, { disablePreview: true });
 
     BotController.addListener("remove", true, (chatId, removeSourceId) => {
 
@@ -42,11 +42,11 @@ export function attachSourceHandling() {
         const sourceList = getSourceList(chatId);
 
         return `${Content.remove}\r\n\r\n\r\n${sourceList}`;
-    }, { disable_web_page_preview: true });
+    }, { disablePreview: true });
 
     BotController.addListener("list", false, async (chatId) => {
         return getSourceList(chatId);
-    }, { disable_web_page_preview: true });
+    }, { disablePreview: true });
 }
 
 async function getSourceList(chatId: number) {

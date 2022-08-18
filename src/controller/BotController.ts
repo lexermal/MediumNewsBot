@@ -1,8 +1,10 @@
 import { Context, Telegraf } from "telegraf";
-import { ExtraReplyMessage } from "telegraf/typings/telegram-types";
 import Log from "../_old/utils/Logger";
 
 type MessageFunction = (chatId: number, additionalSendText: string) => Promise<string> | string;
+interface MessageOptions {
+    disablePreview: boolean;
+}
 
 class _BotController {
     bot: Telegraf<Context>;
@@ -31,7 +33,7 @@ class _BotController {
         });
     }
 
-    addListener(command: string, anyFollowingCharacters: boolean, fnc: MessageFunction, messageOptions?: ExtraReplyMessage) {
+    addListener(command: string, anyFollowingCharacters: boolean, fnc: MessageFunction, messageOptions?: MessageOptions) {
         let listener = new RegExp("/" + command);
 
         if (anyFollowingCharacters) {
@@ -42,7 +44,7 @@ class _BotController {
             const chatId = msg.message!.chat.id;
             const additionalText = (msg.match![1]).toString().trim();
 
-            msg.replyWithMarkdown(await fnc(chatId, additionalText), messageOptions);
+            msg.replyWithMarkdown(await fnc(chatId, additionalText), { disable_web_page_preview: messageOptions?.disablePreview });
         });
     }
 
