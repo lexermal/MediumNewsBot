@@ -4,70 +4,59 @@ import { Source } from "../../entity/Source";
 import { getSourceLink } from "../utils/ArticleSender";
 import { isValidHttpUrl, getSource } from "../utils/SourceTypeAnalyser";
 import { Fetcher } from "../utils/Fetcher";
-import { Telegraf, Context } from "telegraf";
 import SourceController from "../../controller/SourceController";
+import BotController from "../../controller/BotController";
 
-export function attachSourceHandling(bot: Telegraf<Context>) {
+export function attachSourceHandling() {
     const sc = SourceController;
 
-    bot.hears(/\/add (.+)/, async (msg) => {
-        const url = msg.match![1];
-        const chatID = msg.message!.chat.id;
-
+    BotController.addListener("add", true, async (chatID, url) => {
         if (!isValidHttpUrl(url)) {
-            msg.replyWithMarkdown("The provided url is not valid.");
-            return;
+            return "The provided url is not valid.";
         }
 
         const [sourceType, urlPart] = getSource(new URL(url));
 
         if (!await Fetcher.isFetchable(Fetcher.getURL(sourceType, [urlPart]))) {
-            msg.replyWithMarkdown(`The url should be of type ${sourceType} but the RSS feed was not fetchable.` +
-                ` Are you sure you provided a url to a blog that uses the Medium.com CMS?`);
-            return;
+            return `The url should be of type ${sourceType} but the RSS feed was not fetchable.` +
+                ` Are you sure you provided a url to a blog that uses the Medium.com CMS?`;
         }
 
         sc.addSource(chatID, sourceType, urlPart);
 
-        msg.replyWithMarkdown(`*${urlPart}* of type *${sourceType}* ${Content.added}`);
+        return `*${urlPart}* of type *${sourceType}* ${Content.added}`;
     });
 
-    bot.hears(/\/add/, (msg) => msg.replyWithMarkdown(Content.add, { disable_web_page_preview: false }));
+    BotController.addListener("add", false, () => Content.add, { disable_web_page_preview: true });
 
-    bot.hears(/\/remove (.+)/, async (msg) => {
-        const chatId = msg.message!.chat.id;
-        const removeSourceId = (msg.match![1]).toString().trim();
+    BotController.addListener("remove", true, (chatId, removeSourceId) => {
 
-        sc.removeSource(chatId, removeSourceId).then(sourceName => {
-            msg.replyWithMarkdown(`*${sourceName}* was successfully removed.`);
+        return sc.removeSource(chatId, removeSourceId).then(sourceName => {
+            return `*${sourceName}* was successfully removed.`;
         }).catch(error => {
-            msg.replyWithMarkdown(error.message);
+            return error.message;
         });
     });
 
-    bot.hears(/\/remove/, async (msg) => {
-        const chatId = msg.message!.chat.id;
-        const sources = await sc.getSources(chatId);
+    BotController.addListener("remove", false, async (chatId) => {
+        const sourceList = getSourceList(chatId);
 
-        let sourceList = getFormattedSourceList(sources);
-        if (sourceList.length === 0) {
-            sourceList = "No sources are in your list.";
-        }
+        return `${Content.remove}\r\n\r\n\r\n${sourceList}`;
+    }, { disable_web_page_preview: true });
 
-        msg.replyWithMarkdown(Content.remove + `\r\n\r\n\r\n*Your medium sources:*\r\n\r\n${sourceList}`);
-    });
+    BotController.addListener("list", false, async (chatId) => {
+        return getSourceList(chatId);
+    }, { disable_web_page_preview: true });
+}
 
-    bot.hears(/\/list/, async (msg) => {
-        const chatId = msg.message!.chat.id;
+async function getSourceList(chatId: number) {
+    let sourceList = getFormattedSourceList(await SourceController.getSources(chatId));
 
-        let sourceList = await getFormattedSourceList(await sc.getSources(chatId));
+    if (sourceList.length === 0) {
+        sourceList = "No sources are in your list.";
+    }
 
-        if (sourceList.length === 0) {
-            sourceList = "No sources are in your list.";
-        }
-
-        msg.replyWithMarkdown(`*Your medium sources:*\r\n\r\n${sourceList}`, { disable_web_page_preview: false });
-    });
+    return `*Your medium sources:*\r\n\r\n${sourceList}`;
 }
 
 function getFormattedSourceList(sources: Source[]) {

@@ -1,4 +1,5 @@
 import { Context, Telegraf } from "telegraf";
+import { ExtraReplyMessage } from "telegraf/typings/telegram-types";
 import Log from "../_old/utils/Logger";
 
 type MessageFunction = (chatId: number, additionalSendText: string) => Promise<string> | string;
@@ -32,7 +33,7 @@ class _BotController {
         });
     }
 
-    addListener(command: string, anyFollowingCharacters: boolean, fnc: MessageFunction) {
+    addListener(command: string, anyFollowingCharacters: boolean, fnc: MessageFunction, messageOptions?: ExtraReplyMessage) {
         let listener = new RegExp("/" + command);
 
         if (anyFollowingCharacters) {
@@ -41,9 +42,9 @@ class _BotController {
 
         this.bot.hears(listener, async (msg) => {
             const chatId = msg.message!.chat.id;
-            const additionalText = msg.match![1];
+            const additionalText = (msg.match![1]).toString().trim();
 
-            msg.replyWithMarkdown(await fnc(chatId, additionalText));
+            msg.replyWithMarkdown(await fnc(chatId, additionalText), messageOptions);
         });
     }
 

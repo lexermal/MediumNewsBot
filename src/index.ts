@@ -14,7 +14,7 @@ const log = Log.getInstance();
 
 
 async function startBot(con: DataSource) {
-    attachSourceHandling(bot);
+    attachSourceHandling();
     attachBlacklistHandling(bot, con);
 
     BotController.setWelcomeMessage(() => Content.start);
