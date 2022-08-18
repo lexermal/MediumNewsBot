@@ -1,9 +1,9 @@
-import { Content } from "../content/Content";
-import { BlacklistedTag } from "../../entity/BlacklistedTag";
-import BotController from "../../controller/BotController";
-import BlacklistController from "../../controller/BlackListController";
+import { Content } from "../_old/content/Content";
+import { BlacklistedTag } from "../entity/BlacklistedTag";
+import BotController from "../controller/BotController";
+import BlacklistController from "../controller/BlackListController";
 
-export function attachBlacklistHandling() {
+export function attachBlacklistListeners() {
 
     BotController.addListener("block", true, async (chatID, tagString) => {
         const preparedTags = await BlacklistController.addTag(chatID, tagString);

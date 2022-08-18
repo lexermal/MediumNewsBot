@@ -1,15 +1,13 @@
 import { URL } from "url";
-import { Content } from "../content/Content";
-import { Source } from "../../entity/Source";
-import { getSourceLink } from "../utils/ArticleSender";
-import { validURL, getSource } from "../utils/SourceTypeAnalyser";
-import { Fetcher } from "../utils/Fetcher";
-import SourceController from "../../controller/SourceController";
-import BotController from "../../controller/BotController";
+import { Content } from "../_old/content/Content";
+import { Source } from "../entity/Source";
+import { getSourceLink } from "../_old/utils/ArticleSender";
+import { validURL, getSource } from "../_old/utils/SourceTypeAnalyser";
+import { Fetcher } from "../_old/utils/Fetcher";
+import SourceController from "../controller/SourceController";
+import BotController from "../controller/BotController";
 
-export function attachSourceHandling() {
-    const sc = SourceController;
-
+export function attachSourceListeners() {
     BotController.addListener("add", true, async (chatID, url) => {
         if (!validURL(url)) {
             return "The provided url is not valid.";
@@ -22,7 +20,7 @@ export function attachSourceHandling() {
                 ` Are you sure you provided a url to a blog that uses the Medium.com CMS?`;
         }
 
-        sc.addSource(chatID, sourceType, urlPart);
+        SourceController.addSource(chatID, sourceType, urlPart);
 
         return `*${urlPart}* of type *${sourceType}* ${Content.added}`;
     });
@@ -31,7 +29,7 @@ export function attachSourceHandling() {
 
     BotController.addListener("remove", true, (chatId, removeSourceId) => {
 
-        return sc.removeSource(chatId, removeSourceId).then(sourceName => {
+        return SourceController.removeSource(chatId, removeSourceId).then(sourceName => {
             return `*${sourceName}* was successfully removed.`;
         }).catch(error => {
             return error.message;

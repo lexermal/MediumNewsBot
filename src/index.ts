@@ -1,8 +1,8 @@
 import "reflect-metadata";
 import BotController from "./controller/BotController";
 import DatabaseController from "./controller/DatabaseController";
-import { attachBlacklistHandling as attachBlacklistListeners } from "./_old/bot/Blacklist";
-import { attachSourceHandling as attachSourceListeners } from "./_old/bot/Source";
+import { attachBlacklistListeners } from "./listeners/Blacklist";
+import { attachSourceListeners } from "./listeners/Source";
 import { Content } from "./_old/content/Content";
 import { fetchNewArticles } from "./_old/utils/ArticleFetcher";
 import { sendNewArticles } from "./_old/utils/ArticleSender";
