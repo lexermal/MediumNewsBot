@@ -22,7 +22,7 @@ class _BotController {
             Log.info(`User ${chatId} joined the bot.`);
 
             return await fnc(chatId, additionalText);
-        });
+        }, { disablePreview: true });
     }
 
     setHelpMessage(fnc: MessageFunction) {
@@ -30,7 +30,7 @@ class _BotController {
             Log.info(`User ${chatId} requested the help message.`);
 
             return await fnc(chatId, additionalText);
-        });
+        }, { disablePreview: true });
     }
 
     addListener(command: string, anyFollowingCharacters: boolean, fnc: MessageFunction, messageOptions?: MessageOptions) {
