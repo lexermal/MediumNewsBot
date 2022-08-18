@@ -4,9 +4,9 @@ import DatabaseController from "./controller/DatabaseController";
 import { attachBlacklistListeners } from "./listeners/BlacklistListerner";
 import { attachSourceListeners } from "./listeners/SourceListener";
 import { Content } from "./_old/content/Content";
-import { fetchNewArticles } from "./_old/utils/ArticleFetcher";
 import { sendNewArticles } from "./_old/utils/ArticleSender";
 import Log from "./utils/Logger";
+import ArticleController from "./controller/ArticleController";
 
 
 Log.info("Starting Medium News bot.");
@@ -29,7 +29,7 @@ DatabaseController.initDB().then(() => {
     const fetchingDuration = Number(process.env.FETCHING_DURATION || 5); //minutes
     const sendingDuration = Number(process.env.SENDING_DURATION || 6); //minutes
 
-    fetchNewArticles(fetchingDuration);
+    ArticleController.startArticleFetching(fetchingDuration);
 
     const con = DatabaseController.getConnection();
     const bot = BotController.getBot();

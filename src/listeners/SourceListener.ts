@@ -2,7 +2,7 @@ import { URL } from "url";
 import { Content } from "../_old/content/Content";
 import { Source } from "../entity/Source";
 import { getSourceLink } from "../_old/utils/ArticleSender";
-import { Fetcher } from "../utils/ArticleFetcher";
+import { ArticleFetcher } from "../utils/ArticleFetcher";
 import SourceController from "../controller/SourceController";
 import BotController from "../controller/BotController";
 
@@ -15,7 +15,7 @@ export function attachSourceListeners() {
 
         const source = SourceController.urlToSource(chatId, new URL(url));
 
-        if (!await Fetcher.isFetchable(SourceController.getFeedUrl(source))) {
+        if (!await ArticleFetcher.isFetchable(SourceController.getFeedUrl(source))) {
             return `The url should be of type ${source.type} but the RSS feed was not fetchable.` +
                 ` Are you sure you provided a url to a blog that uses the Medium.com CMS?`;
         }

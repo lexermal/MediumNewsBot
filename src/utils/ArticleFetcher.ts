@@ -6,7 +6,7 @@ import { Source } from "../entity/Source";
 import Log from "./Logger";
 
 type FetcherItem = { [key: string]: any; } & Parser.Item;
-export class Fetcher {
+export class ArticleFetcher {
 
     public static async isFetchable(url: string): Promise<boolean> {
         const parser = new Parser();

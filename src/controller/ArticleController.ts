@@ -1,9 +1,12 @@
 import { Article } from "../entity/Article";
+import { ArticleFetcher } from "../utils/ArticleFetcher";
 import Log from "../utils/Logger";
 import DatabaseController from "./DatabaseController";
+import SourceController from "./SourceController";
 import UserArticleController from "./UserArticleController";
 
 class _ArticleController {
+    fetcher = new ArticleFetcher();
 
     getDBTable() {
         return DatabaseController.getConnection().getRepository(Article);
@@ -22,6 +25,31 @@ class _ArticleController {
         }
 
         UserArticleController.add(chatId, sourceId, article.articleId);
+    }
+
+    startArticleFetching(fetchingDuration: number) {
+        this.fetchNewArticles(fetchingDuration);
+    }
+
+    async fetchNewArticles(fetchingDuration: number) {
+        Log.info("Starting to fetch new articles.");
+
+        const sourceItems = await SourceController.getAllSources();
+        Log.debug(`Found ${sourceItems.length} sources in the database.`);
+
+        await Promise.all(sourceItems.map(async source => {
+            const articles = await this.fetcher.getLatestArticles(source);
+
+            const uniqueArticles = [...new Set(articles)];
+
+            // the list of articles that could be added needs to be unique.
+            // Otherwise the database check does not work because of the async operations
+            await Promise.all(uniqueArticles.map(article => ArticleController.addArticle(source.chatId, source.id, article)));
+        }));
+
+        Log.debug(`Finished fetching new articles. Waiting for ${fetchingDuration} minutes.`);
+
+        setTimeout(() => this.fetchNewArticles(fetchingDuration), fetchingDuration * 60 * 1000);
     }
 }
 
