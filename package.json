@@ -1,7 +1,7 @@
 {
   "name": "lexermal_mediumnewsbot",
   "version": "0.2.0",
-  "description": "A Node.js Telegram Bot to subscribe Medium articles for reading",
+  "description": "A Node.js Telegram Bot to subscribe to Medium.com articles",
   "repository": "https://github.com/lexermal/mediumNewsBot",
   "author": "Lexermal",
   "license": "c. Lexermal",
