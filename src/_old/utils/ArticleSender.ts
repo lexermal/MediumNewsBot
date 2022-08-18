@@ -1,5 +1,6 @@
 import { Context, Telegraf } from "telegraf";
-import { DataSource, In, MoreThan } from "typeorm";
+import { DataSource, In } from "typeorm";
+import UserArticleController from "../../controller/UserArticleController";
 import { Article } from "../entity/Article";
 import { BlacklistedTag } from "../entity/BlacklistedTag";
 import { Source, SourceType } from "../entity/Source";
@@ -13,10 +14,7 @@ export async function sendNewArticles(bot: Telegraf<Context>, con: DataSource, s
 
     const timestamp = new Date(Date.now() - sendingDuration * 60 * 1000); //now minus x minutes
 
-    const userArticles = await con.manager.find(UserArticle, {
-        where: { added: MoreThan(timestamp.getTime()) }
-    });
-
+    const userArticles = await new UserArticleController().getUnsendUserArticles(timestamp);
     log.debug(`Found ${userArticles.length} new unsent articles.`);
 
 

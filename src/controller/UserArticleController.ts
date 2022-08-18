@@ -1,10 +1,17 @@
 import { UserArticle } from "../_old/entity/UserArticle";
 import DatabaseController from "./DatabaseController";
+import { MoreThan } from "typeorm";
 
 class UserArticleController {
 
     getDBTable() {
         return DatabaseController.getConnection().getRepository(UserArticle);
+    }
+
+    async getUnsendUserArticles(timestamp: Date) {
+        return await this.getDBTable().find({
+            where: { added: MoreThan(timestamp.getTime()) }
+        });
     }
 
     async exists(chatId: number, articleId: string) {
