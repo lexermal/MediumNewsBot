@@ -2,7 +2,7 @@
   "name": "lexermal_mediumnewsbot",
   "version": "0.2.0",
   "description": "A Node.js Telegram Bot to subscribe to Medium.com articles",
-  "repository": "https://github.com/lexermal/mediumNewsBot",
+  "repository": "https://github.com/lexermal/MediumNewsBot",
   "author": "Lexermal",
   "license": "c. Lexermal",
   "private": false,
@@ -23,7 +23,6 @@
     "ts-node": "10.9.1"
   },
   "scripts": {
-    "start": "yarn prod",
     "dev": "yarn install && export FETCHING_DURATION=0.9 && export SENDING_DURATION=0.3 && yarn prod",
     "prod": "yarn ts-node --require dotenv/config ./src/index.ts"
   },
@@ -33,7 +32,7 @@
     "Bot"
   ],
   "bugs": {
-    "url": "https://github.com/lexermal/mediumNewsBot/issues"
+    "url": "https://github.com/lexermal/MediumNewsBot/issues"
   },
-  "homepage": "https://github.com/lexermal/mediumNewsBot"
+  "homepage": "https://github.com/lexermal/MediumNewsBot"
 }

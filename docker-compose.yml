@@ -9,3 +9,5 @@ services:
       - /mnt/vol1/mediumnewsbot:/usr/src/app/db
     environment:
       TELEGRAF_TOKEN: "my-telegram-bot-token"
+      FETCHING_DURATION: 5
+      SENDING_DURATION: 3
