@@ -49,7 +49,7 @@ class _BotController {
     }
 
     async sendHtmlMessage(chatId: number, message: string) {
-        return this.bot.telegram.sendMessage(chatId, message, { parse_mode: 'HTML' });
+        return this.bot.telegram.sendMessage(chatId, message, { parse_mode: 'HTML', disable_web_page_preview: true });
     }
 
     async sendPhoto(chatId: number, url: string, caption: string) {
