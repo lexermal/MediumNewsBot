@@ -2,7 +2,7 @@ import parse, { HTMLElement } from "node-html-parser";
 import Parser from "rss-parser";
 import { Article } from "../../entity/Article";
 import { Source, SourceType } from "../../entity/Source";
-import Log from "./Logger";
+import Log from "../../utils/Logger";
 
 export class Fetcher {
 

@@ -1,5 +1,5 @@
 import { Source, SourceType } from "../entity/Source";
-import Log from "../_old/utils/Logger";
+import Log from "../utils/Logger";
 import DatabaseController from "./DatabaseController";
 
 class _SourceController {

@@ -5,7 +5,7 @@ import { Article } from "../../entity/Article";
 import { BlacklistedTag } from "../../entity/BlacklistedTag";
 import { Source, SourceType } from "../../entity/Source";
 import { UserArticle } from "../../entity/UserArticle";
-import Log from "./Logger";
+import Log from "../../utils/Logger";
 
 export async function sendNewArticles(bot: Telegraf<Context>, con: DataSource, sendingDuration: number) {
     Log.info("Start sending new articles.");

@@ -1,5 +1,5 @@
 import { Context, Telegraf } from "telegraf";
-import Log from "../_old/utils/Logger";
+import Log from "../utils/Logger";
 
 type MessageFunction = (chatId: number, additionalSendText: string) => Promise<string> | string;
 interface MessageOptions {

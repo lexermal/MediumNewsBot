@@ -6,7 +6,7 @@ import { attachSourceListeners } from "./listeners/Source";
 import { Content } from "./_old/content/Content";
 import { fetchNewArticles } from "./_old/utils/ArticleFetcher";
 import { sendNewArticles } from "./_old/utils/ArticleSender";
-import Log from "./_old/utils/Logger";
+import Log from "./utils/Logger";
 
 
 Log.info("Starting Medium News bot.");
