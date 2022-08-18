@@ -5,6 +5,7 @@ import { Article } from "../../entity/Article";
 import { Source } from "../../entity/Source";
 import Log from "../../utils/Logger";
 
+type FetcherItem = { [key: string]: any; } & Parser.Item;
 export class Fetcher {
 
     public static async isFetchable(url: string): Promise<boolean> {
@@ -16,35 +17,35 @@ export class Fetcher {
     public async getLatestArticles(source: Source): Promise<Article[]> {
         const url = SourceController.getFeedUrl(source);
 
-        const parser = new Parser();
-
-        return parser.parseURL(url)
+        return new Parser().parseURL(url)
             .catch(e => {
                 Log.error(`The following error accured when fetching articles from ${url}: ${e.message}`, e);
                 return { items: [] };
             }).then(feed => {
                 const posts = feed.items.filter(item => typeof item.categories !== 'undefined' && item.categories.length > 0);
 
-                return posts.map(item => {
-                    const article = new Article();
-
-                    article.articleId = item.guid!;
-                    article.title = item.title!.replace(/(?:\r\n|\r|\n)/g, ' ');
-                    article.link = item.link!.split("?")[0];
-                    article.creator = item.creator!;
-                    article.pubDate = item.isoDate!;
-                    article.previewText = (item.contentSnippet || "").replace(/(?:\r\n|\r|\n)/g, ' ').split("Continue reading on")[0].trim();
-                    article.setCategories(item.categories!);
-
-                    if (item.content) {
-                        const htmlObject = parse(item.content);
-                        const imageObject = (htmlObject.firstChild.childNodes[0].childNodes[0].childNodes[0] as HTMLElement);
-
-                        article.imageURL = imageObject?.attrs?.src || "";
-                    }
-
-                    return article;
-                });
+                return posts.map(this.convertToArticle);
             });
+    }
+
+    convertToArticle(item: FetcherItem) {
+        const article = new Article();
+
+        article.articleId = item.guid!;
+        article.title = item.title!.replace(/(?:\r\n|\r|\n)/g, ' ');
+        article.link = item.link!.split("?")[0];
+        article.creator = item.creator!;
+        article.pubDate = item.isoDate!;
+        article.previewText = (item.contentSnippet || "").replace(/(?:\r\n|\r|\n)/g, ' ').split("Continue reading on")[0].trim();
+        article.setCategories(item.categories!);
+
+        if (item.content) {
+            const htmlObject = parse(item.content);
+            const imageObject = (htmlObject.firstChild.childNodes[0].childNodes[0].childNodes[0] as HTMLElement);
+
+            article.imageURL = imageObject?.attrs?.src || "";
+        }
+
+        return article;
     }
 }
