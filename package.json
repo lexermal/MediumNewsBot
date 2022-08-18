@@ -1,12 +1,11 @@
 {
   "name": "lexermal_mediumnewsbot",
-  "version": "0.1.0",
-  "main": "bin/index.js",
+  "version": "0.2.0",
   "description": "A Node.js Telegram Bot to subscribe Medium articles for reading",
   "repository": "https://github.com/lexermal/mediumNewsBot",
   "author": "Lexermal",
-  "license": "MIT",
-  "private": true,
+  "license": "c. Lexermal",
+  "private": false,
   "dependencies": {
     "dotenv": "16.0.1",
     "logform": "2.4.2",
@@ -36,5 +35,5 @@
   "bugs": {
     "url": "https://github.com/lexermal/mediumNewsBot/issues"
   },
-  "homepage": "https://github.com/lexermal/mediumNewsBot#readme"
+  "homepage": "https://github.com/lexermal/mediumNewsBot"
 }
