@@ -1,4 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { convertTagToCheckableString } from "../utils/TagUtils";
 
 @Entity()
 export class Article {
@@ -31,11 +32,11 @@ export class Article {
     categories: string;
 
 
-    public setCategories(categories: string[]) {
-        this.categories = categories.join(";").replace(/-/g, "_");
+    public setTags(tags: string[]) {
+        this.categories = convertTagToCheckableString(tags.join(";"));
     }
 
-    public getCategories() {
+    public getTags() {
         return this.categories.split(";");
     }
 }

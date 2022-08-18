@@ -1,6 +1,7 @@
 import { Article } from "../entity/Article";
 import { ArticleFetcher } from "../utils/ArticleFetcher";
 import Log from "../utils/Logger";
+import ArticleSender from "../_old/utils/ArticleSender";
 import DatabaseController from "./DatabaseController";
 import SourceController from "./SourceController";
 import UserArticleController from "./UserArticleController";
@@ -10,6 +11,10 @@ class _ArticleController {
 
     getDBTable() {
         return DatabaseController.getConnection().getRepository(Article);
+    }
+
+    getArticle(articleId: string): Promise<Article | null> {
+        return this.getDBTable().findOneBy({ articleId });
     }
 
     async exists(id: string) {
@@ -50,6 +55,20 @@ class _ArticleController {
         Log.debug(`Finished fetching new articles. Waiting for ${fetchingDuration} minutes.`);
 
         setTimeout(() => this.fetchNewArticles(fetchingDuration), fetchingDuration * 60 * 1000);
+    }
+
+    async startArticleSending(sendingDuration: number) {
+        this.sendNewArticles(sendingDuration);
+    }
+
+
+    async sendNewArticles(sendingDuration: number) {
+        Log.info("Start sending new articles.");
+
+        await new ArticleSender().sendArticles(sendingDuration);
+
+        Log.debug(`Finished sending unseen articles. Waiting ${sendingDuration} minutes.`);
+        setTimeout(() => this.sendNewArticles(sendingDuration), sendingDuration * 60 * 1000);
     }
 }
 

@@ -48,6 +48,14 @@ class _BotController {
         });
     }
 
+    async sendHtmlMessage(chatId: number, message: string) {
+        return this.bot.telegram.sendMessage(chatId, message, { parse_mode: 'HTML' });
+    }
+
+    async sendPhoto(chatId: number, url: string, caption: string) {
+        return this.bot.telegram.sendPhoto(chatId, url, { parse_mode: 'HTML', caption });
+    }
+
     launch() {
         this.bot.launch();
     }

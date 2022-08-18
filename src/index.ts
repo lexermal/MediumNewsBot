@@ -4,7 +4,6 @@ import DatabaseController from "./controller/DatabaseController";
 import { attachBlacklistListeners } from "./listeners/BlacklistListerner";
 import { attachSourceListeners } from "./listeners/SourceListener";
 import { Content } from "./_old/content/Content";
-import { sendNewArticles } from "./_old/utils/ArticleSender";
 import Log from "./utils/Logger";
 import ArticleController from "./controller/ArticleController";
 
@@ -31,10 +30,7 @@ DatabaseController.initDB().then(() => {
 
     ArticleController.startArticleFetching(fetchingDuration);
 
-    const con = DatabaseController.getConnection();
-    const bot = BotController.getBot();
-
-    sendNewArticles(bot, con, sendingDuration);
+    ArticleController.startArticleSending(sendingDuration);
 }).catch(e => {
     Log.error(e.message, e);
     process.exit(1);

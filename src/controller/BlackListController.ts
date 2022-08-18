@@ -1,7 +1,7 @@
 import { BlacklistedTag } from "../entity/BlacklistedTag";
 import Log from "../utils/Logger";
+import { convertTagToCheckableString, convertToReadableTag } from "../utils/TagUtils";
 import DatabaseController from "./DatabaseController";
-import UserArticleController from "./UserArticleController";
 
 class _BacklistController {
 
@@ -20,7 +20,7 @@ class _BacklistController {
     async addTag(chatId: number, rawTagString: string) {
         Log.debug(`User ${chatId} is trying to block the tag(s) '${rawTagString}'.`);
 
-        const tagString = this.convertTagToCheckableString(rawTagString);
+        const tagString = convertTagToCheckableString(rawTagString);
 
         if (!await this.exists(chatId, tagString)) {
             const tagToBeBlocked = new BlacklistedTag();
@@ -33,7 +33,7 @@ class _BacklistController {
             Log.info(`Successfully added blocking of the tag '${tagString}' for user ${chatId}.`);
         }
 
-        return this.convertToReadableTag(tagString);
+        return convertToReadableTag(tagString);
     }
 
     async removeTag(chatID: number, index: string): Promise<string> {
@@ -46,7 +46,7 @@ class _BacklistController {
 
         this.getDBTable().remove(item);
 
-        return this.convertToReadableTag(item.tags[0]); //=name of tag
+        return convertToReadableTag(item.tags[0]); //=name of tag
     }
 
     async isValidId(chatId: number, id: string) {
@@ -63,19 +63,6 @@ class _BacklistController {
         }
         return true;
     }
-
-    convertTagToCheckableString(tag: string) {
-        return tag
-            .replaceAll(".", "_")
-            .replaceAll("-", "_")
-            .replaceAll("+", "")
-            .replaceAll(" ", "+");
-    }
-
-    convertToReadableTag(tag: string) {
-        return tag.replaceAll("+", " ");
-    }
-
 }
 
 const BlacklistController = new _BacklistController();

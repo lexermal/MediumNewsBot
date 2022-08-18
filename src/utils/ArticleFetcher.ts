@@ -44,7 +44,7 @@ export class ArticleFetcher {
         article.creator = item.creator!;
         article.pubDate = item.isoDate!;
         article.previewText = (item.contentSnippet || "").replace(/(?:\r\n|\r|\n)/g, ' ').split("Continue reading on")[0].trim();
-        article.setCategories(item.categories!);
+        article.setTags(item.categories!);
 
         if (item.content) {
             const htmlObject = parse(item.content);

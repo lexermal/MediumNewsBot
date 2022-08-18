@@ -12,6 +12,10 @@ class _SourceController {
         return await this.getDBTable().findBy({ chatId });
     }
 
+    async getSource(sourceId: number) {
+        return await this.getDBTable().findOneBy({ id: sourceId });
+    }
+
     async getAllSources() {
         return await this.getDBTable().find();
     }
@@ -96,6 +100,21 @@ class _SourceController {
         }
 
         return source.setParameters(chatId, SourceType.PUBLICATION, urlParts[1]);  // eg. /personal-growth
+    }
+
+    getUrlOfSource(source: Source) {
+        switch (source.type) {
+            case SourceType.USER:
+                return `https://medium.com/@${source.urlPart1}`;
+            case SourceType.DOMAIN:
+                return `https://${source.urlPart1}`;
+            case SourceType.TAG:
+                return `https://medium.com/tag/${source.urlPart1}`;
+            case SourceType.PUBLICATION:
+                return `https://medium.com/${source.urlPart1}`;
+            default:
+                throw new Error(`Unknown fetchingtype '${source.type}'`);
+        }
     }
 }
 

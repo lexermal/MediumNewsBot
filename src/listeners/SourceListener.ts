@@ -1,7 +1,6 @@
 import { URL } from "url";
 import { Content } from "../_old/content/Content";
 import { Source } from "../entity/Source";
-import { getSourceLink } from "../_old/utils/ArticleSender";
 import { ArticleFetcher } from "../utils/ArticleFetcher";
 import SourceController from "../controller/SourceController";
 import BotController from "../controller/BotController";
@@ -59,7 +58,7 @@ async function getSourceList(chatId: number) {
 
 function getFormattedList(sources: Source[]) {
     return sources
-        .map((source, index) => `*${index + 1}*: [${source.urlPart1}](${getSourceLink(source)})`)
+        .map((source, index) => `*${index + 1}*: [${source.urlPart1}](${SourceController.getUrlOfSource(source)})`)
         .join("\r\n");
 }
 
