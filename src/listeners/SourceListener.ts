@@ -36,7 +36,7 @@ export function attachSourceListeners() {
     });
 
     BotController.addListener("remove", false, async (chatId) => {
-        const sourceList = getSourceList(chatId);
+        const sourceList = await getSourceList(chatId);
 
         return `${Content.remove}\r\n\r\n\r\n${sourceList}`;
     }, { disablePreview: true });
@@ -53,7 +53,7 @@ async function getSourceList(chatId: number) {
         sources = "No sources are in your list.";
     }
 
-    return `*Your medium sources:*\r\n\r\n${sources}`;
+    return `*Your medium sources:*\r\n${sources}`;
 }
 
 function getFormattedList(sources: Source[]) {

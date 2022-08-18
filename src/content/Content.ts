@@ -56,10 +56,7 @@ Remove publishers, users, tags or domains from your subscriptions.
     Articles having this tag will be blocked from getting sent to you.
 
     /block hello\\_world abc
-    Articles containing booth tags (hello\\_world AND abc) will be blocked.
-
-
-If you want to see all avaiable commands type /help`;
+    Articles containing booth tags (hello\\_world AND abc) will be blocked.`;
 
     public static unblock = `
 Removes a tag from your blocked tags. After unblocking, future articles with this tag will be send.

@@ -9,7 +9,7 @@ export function attachBlacklistListeners() {
         const preparedTags = await BlacklistController.addTag(chatID, tagString);
 
         return `Successfully blocked the tag *${preparedTags}*.\r\n` +
-            `You will not receive articles containing these tags anymore.`;
+            `You will not receive articles containing this tag anymore.`;
     });
 
     BotController.addListener("block", false, () => Content.block, { disablePreview: true });
@@ -32,12 +32,12 @@ export function attachBlacklistListeners() {
             tags = "No tags are blocked.";
         }
 
-        return `*Your medium tags:*\r\n\r\n${tags}`;
+        return `*Your blocked tags:*\r\n\r\n${tags}`;
     }, { disablePreview: true });
 }
 
 function getFormattedList(tags: BlacklistedTag[]) {
     return tags
-        .map((tag, index) => `*${index + 1}*: ${tag}`)
+        .map((tag, index) => `*${index + 1}*: ${tag.tags[0]}`)
         .join("\r\n");
 }
