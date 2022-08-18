@@ -4,7 +4,7 @@ import DatabaseController from "./DatabaseController";
 
 const log = Log.getInstance();
 
-class SourceController {
+class _SourceController {
 
     getDBTable() {
         return DatabaseController.getConnection().getRepository(Source);
@@ -65,5 +65,7 @@ class SourceController {
         return true;
     }
 }
+
+const SourceController = new _SourceController();
 
 export default SourceController;

@@ -8,7 +8,7 @@ import { Telegraf, Context } from "telegraf";
 import SourceController from "../../controller/SourceController";
 
 export function attachSourceHandling(bot: Telegraf<Context>) {
-    const sc = new SourceController();
+    const sc = SourceController;
 
     bot.hears(/\/add (.+)/, async (msg) => {
         const url = msg.match![1];

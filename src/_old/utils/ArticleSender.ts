@@ -14,7 +14,7 @@ export async function sendNewArticles(bot: Telegraf<Context>, con: DataSource, s
 
     const timestamp = new Date(Date.now() - sendingDuration * 60 * 1000); //now minus x minutes
 
-    const userArticles = await new UserArticleController().getUnsendUserArticles(timestamp);
+    const userArticles = await UserArticleController.getUnsendUserArticles(timestamp);
     log.debug(`Found ${userArticles.length} new unsent articles.`);
 
 

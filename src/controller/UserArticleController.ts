@@ -2,7 +2,7 @@ import { UserArticle } from "../entity/UserArticle";
 import DatabaseController from "./DatabaseController";
 import { MoreThan } from "typeorm";
 
-class UserArticleController {
+class _UserArticleController {
 
     getDBTable() {
         return DatabaseController.getConnection().getRepository(UserArticle);
@@ -34,5 +34,6 @@ class UserArticleController {
     }
 }
 
+const UserArticleController = new _UserArticleController();
 
 export default UserArticleController;

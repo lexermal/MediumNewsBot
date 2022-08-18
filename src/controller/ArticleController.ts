@@ -5,14 +5,14 @@ import UserArticleController from "./UserArticleController";
 
 const log = Log.getInstance();
 
-class ArticleController {
+class _ArticleController {
 
     getDBTable() {
         return DatabaseController.getConnection().getRepository(Article);
     }
 
     async exists(id: string) {
-        return (await this.getDBTable().findOneBy({ articleId: id }))!=null;
+        return (await this.getDBTable().findOneBy({ articleId: id })) != null;
     }
 
     async addArticle(chatId: number, sourceId: number, article: Article,) {
@@ -23,8 +23,10 @@ class ArticleController {
             log.debug(`Added new article ${article.articleId} with the title '${article.title}'.`);
         }
 
-        new UserArticleController().add(chatId, sourceId, article.articleId);
+        UserArticleController.add(chatId, sourceId, article.articleId);
     }
 }
+
+const ArticleController = new _ArticleController();
 
 export default ArticleController;
