@@ -7,19 +7,17 @@ import { Source, SourceType } from "../../entity/Source";
 import { UserArticle } from "../../entity/UserArticle";
 import Log from "./Logger";
 
-const log = Log.getInstance();
-
 export async function sendNewArticles(bot: Telegraf<Context>, con: DataSource, sendingDuration: number) {
-    log.info("Start sending new articles.");
+    Log.info("Start sending new articles.");
 
     const timestamp = new Date(Date.now() - sendingDuration * 60 * 1000); //now minus x minutes
 
     const userArticles = await UserArticleController.getUnsendUserArticles(timestamp);
-    log.debug(`Found ${userArticles.length} new unsent articles.`);
+    Log.debug(`Found ${userArticles.length} new unsent articles.`);
 
 
     const groupedEntries = groupArticlesByUser(userArticles);
-    log.debug(groupedEntries.size + " users will get new articles.");
+    Log.debug(groupedEntries.size + " users will get new articles.");
 
     groupedEntries.forEach(async (userArticles, chatId) => {
         const blockedTags = (await con.manager.findBy(BlacklistedTag, { chatId })).map(blacklistedTags => blacklistedTags.tags.join(","));
@@ -39,7 +37,7 @@ export async function sendNewArticles(bot: Telegraf<Context>, con: DataSource, s
             console.log("tags used in article", tags.join(","));
 
             if (blockedTagIndex) {
-                log.debug(`Blocked an article with the tags '${tags.join(" ")}' from getting send because the blocked tag ${blockedTags} matched.`);
+                Log.debug(`Blocked an article with the tags '${tags.join(" ")}' from getting send because the blocked tag ${blockedTags} matched.`);
                 return;
             }
 
@@ -51,19 +49,19 @@ export async function sendNewArticles(bot: Telegraf<Context>, con: DataSource, s
 
             if (!!article.imageURL) {
                 await bot.telegram.sendPhoto(chatId, article.imageURL, { parse_mode: 'HTML', caption: message }).catch(e => {
-                    log.error(`Could not send article ${article.articleId} because ${e.message}. The message was: ${message}`);
+                    Log.error(`Could not send article ${article.articleId} because ${e.message}. The message was: ${message}`);
                 });
             } else {
                 await bot.telegram.sendMessage(chatId, message, { parse_mode: 'HTML' }).catch(e => {
-                    log.error(`Could not send article ${article.articleId} because ${e.message}. The message was: ${message}`);
+                    Log.error(`Could not send article ${article.articleId} because ${e.message}. The message was: ${message}`);
                 });
             }
         });
 
-        log.debug(`Sent ${userArticles.length} unread articles to ${chatId}.`);
+        Log.debug(`Sent ${userArticles.length} unread articles to ${chatId}.`);
     });
 
-    log.debug(`Finished sending all unseen articles. Waiting ${sendingDuration} minutes.`);
+    Log.debug(`Finished sending all unseen articles. Waiting ${sendingDuration} minutes.`);
     setTimeout(() => sendNewArticles(bot, con, sendingDuration), sendingDuration * 60 * 1000);
 }
 

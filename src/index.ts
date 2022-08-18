@@ -10,8 +10,6 @@ import { sendNewArticles } from "./_old/utils/ArticleSender";
 import Log from "./_old/utils/Logger";
 
 const bot = BotController.getBot();
-const log = Log.getInstance();
-
 
 async function startBot(con: DataSource) {
     attachSourceHandling();
@@ -23,18 +21,18 @@ async function startBot(con: DataSource) {
 
     BotController.launch();
 
-    log.info("Successfully started the telegram bot!");
+    Log.info("Successfully started the telegram bot!");
     return con;
 }
 
 
-log.info("Starting the telegram bot.");
+Log.info("Starting the telegram bot.");
 
 DatabaseController.initDB().then(() => {
     return DatabaseController.getConnection();
 }).then(startBot).then(async con => {
 
-    log.info("Starting to fetch new articles and send out unread ones.");
+    Log.info("Starting to fetch new articles and send out unread ones.");
 
     const fetchingDuration = Number(process.env.FETCHING_DURATION || 5); //minutes
     const sendingDuration = Number(process.env.SENDING_DURATION || 6); //minutes
@@ -42,6 +40,6 @@ DatabaseController.initDB().then(() => {
     fetchNewArticles(fetchingDuration);
     sendNewArticles(bot, con, sendingDuration);
 }).catch(e => {
-    log.error(e.message, e);
+    Log.error(e.message, e);
     process.exit(1);
 });

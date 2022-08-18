@@ -3,8 +3,6 @@ import Log from "../_old/utils/Logger";
 import DatabaseController from "./DatabaseController";
 import UserArticleController from "./UserArticleController";
 
-const log = Log.getInstance();
-
 class _ArticleController {
 
     getDBTable() {
@@ -20,7 +18,7 @@ class _ArticleController {
         if (!await this.exists(article.articleId)) {
 
             await this.getDBTable().save(article);
-            log.debug(`Added new article ${article.articleId} with the title '${article.title}'.`);
+            Log.debug(`Added new article ${article.articleId} with the title '${article.title}'.`);
         }
 
         UserArticleController.add(chatId, sourceId, article.articleId);

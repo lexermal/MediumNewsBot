@@ -12,13 +12,13 @@ export function getSource(url: URL): [SourceType, string] {
     }
 
     if (url.pathname.startsWith("/@")) {
-        return [SourceType.USER, urlParts[1].substr(1)];
+        return [SourceType.USER, urlParts[1].substring(1)];
     }
 
     return [SourceType.PUBLICATION, urlParts[1]];  // eg. /personal-growth
 }
 
-export function isValidHttpUrl(string: string) {
+export function validURL(string: string) {
     try {
         const url = new URL(string);
         return url.protocol === "http:" || url.protocol === "https:";

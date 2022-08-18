@@ -4,8 +4,6 @@ import Log from "../_old/utils/Logger";
 
 type MessageFunction = (chatId: number, additionalSendText: string) => Promise<string> | string;
 
-const log = Log.getInstance();
-
 class _BotController {
     bot: Telegraf<Context>;
 
@@ -19,7 +17,7 @@ class _BotController {
 
     setWelcomeMessage(fnc: MessageFunction) {
         this.addListener("start", false, async (chatId, additionalText) => {
-            log.info(`User ${chatId} joined the bot.`);
+            Log.info(`User ${chatId} joined the bot.`);
 
             return await fnc(chatId, additionalText);
         });
@@ -27,7 +25,7 @@ class _BotController {
 
     setHelpMessage(fnc: MessageFunction) {
         this.addListener("help", false, async (chatId, additionalText) => {
-            log.info(`User ${chatId} requested the help message.`);
+            Log.info(`User ${chatId} requested the help message.`);
 
             return await fnc(chatId, additionalText);
         });

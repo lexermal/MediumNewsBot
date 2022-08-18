@@ -2,7 +2,7 @@ import { URL } from "url";
 import { Content } from "../content/Content";
 import { Source } from "../../entity/Source";
 import { getSourceLink } from "../utils/ArticleSender";
-import { isValidHttpUrl, getSource } from "../utils/SourceTypeAnalyser";
+import { validURL, getSource } from "../utils/SourceTypeAnalyser";
 import { Fetcher } from "../utils/Fetcher";
 import SourceController from "../../controller/SourceController";
 import BotController from "../../controller/BotController";
@@ -11,7 +11,7 @@ export function attachSourceHandling() {
     const sc = SourceController;
 
     BotController.addListener("add", true, async (chatID, url) => {
-        if (!isValidHttpUrl(url)) {
+        if (!validURL(url)) {
             return "The provided url is not valid.";
         }
 

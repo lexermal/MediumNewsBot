@@ -2,8 +2,6 @@ import { Source, SourceType } from "../entity/Source";
 import Log from "../_old/utils/Logger";
 import DatabaseController from "./DatabaseController";
 
-const log = Log.getInstance();
-
 class _SourceController {
 
     getDBTable() {
@@ -34,7 +32,7 @@ class _SourceController {
 
             await this.getDBTable().save(source);
 
-            log.debug(`Successfully added source '${urlPart}' for user ${chatId}.`);
+            Log.debug(`Successfully added source '${urlPart}' for user ${chatId}.`);
         }
     }
 
@@ -54,12 +52,12 @@ class _SourceController {
         const sources = await this.getSources(chatId);
 
         if (isNaN(id as unknown as number)) {
-            log.debug(`The user ${chatId} tried to delete a source with the invalid id '${id}'.`);
+            Log.debug(`The user ${chatId} tried to delete a source with the invalid id '${id}'.`);
             return false;
         }
 
         if (Number(id) < 1 || Number(id) > sources.length) {
-            log.debug(`The user ${chatId} tried to delete a source with an id that is not in the allowed range: '${id}'.`);
+            Log.debug(`The user ${chatId} tried to delete a source with an id that is not in the allowed range: '${id}'.`);
             return false;
         }
         return true;

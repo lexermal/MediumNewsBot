@@ -5,11 +5,6 @@ import { Source, SourceType } from "../../entity/Source";
 import Log from "./Logger";
 
 export class Fetcher {
-    private logger: Log;
-
-    constructor(logger?: Log) {
-        this.logger = logger || Log.getInstance();
-    }
 
     public async getLatestArticles(source: Source) {
         return await this.getCurrentArticles(Fetcher.getURL(source.type, source.urlParts));
@@ -44,7 +39,7 @@ export class Fetcher {
 
         return parser.parseURL(url)
             .catch(e => {
-                this.logger.error(`The following error accured when fetching articles from ${url}: ${e.message}`, e);
+                Log.error(`The following error accured when fetching articles from ${url}: ${e.message}`, e);
                 return { items: [] };
             }).then(feed => {
                 const posts = feed.items.filter(item => typeof item.categories !== 'undefined' && item.categories.length > 0)
