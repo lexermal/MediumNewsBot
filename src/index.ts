@@ -1,6 +1,6 @@
 import "reflect-metadata";
-import { Telegraf } from "telegraf";
 import { DataSource } from 'typeorm';
+import BotController from "./controller/BotController";
 import DatabaseController from "./controller/DatabaseController";
 import { attachBlacklistHandling } from "./_old/bot/Blacklist";
 import { attachSourceHandling } from "./_old/bot/Source";
@@ -9,7 +9,7 @@ import { fetchNewArticles } from "./_old/utils/ArticleFetcher";
 import { sendNewArticles } from "./_old/utils/ArticleSender";
 import Log from "./_old/utils/Logger";
 
-const bot = new Telegraf(process.env.TELEGRAF_TOKEN || "");
+const bot = BotController.getBot();
 const log = Log.getInstance();
 
 
@@ -17,18 +17,11 @@ async function startBot(con: DataSource) {
     attachSourceHandling(bot);
     attachBlacklistHandling(bot, con);
 
-    bot.hears(/\/start/, (msg) => {
-        const chatId = msg.message!.chat.id;
+    BotController.setWelcomeMessage(() => Content.start);
 
-        log.info(`The user ${chatId} joined the bot.`);
+    BotController.setHelpMessage(() => Content.help);
 
-        msg.replyWithMarkdown(Content.start);
-    });
-
-
-    bot.hears(/\/help/, (msg) => msg.replyWithMarkdown(Content.help));
-
-    bot.launch();
+    BotController.launch();
 
     log.info("Successfully started the telegram bot!");
     return con;
