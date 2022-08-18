@@ -1,6 +1,6 @@
 import { URL } from "url";
 import { Content } from "../content/Content";
-import { Source } from "../entity/Source";
+import { Source } from "../../entity/Source";
 import { getSourceLink } from "../utils/ArticleSender";
 import { isValidHttpUrl, getSource } from "../utils/SourceTypeAnalyser";
 import { Fetcher } from "../utils/Fetcher";

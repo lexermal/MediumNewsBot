@@ -1,5 +1,5 @@
 import { URL } from "url";
-import { SourceType } from "../entity/Source";
+import { SourceType } from "../../entity/Source";
 
 export function getSource(url: URL): [SourceType, string] {
     if (url.hostname !== "medium.com") {

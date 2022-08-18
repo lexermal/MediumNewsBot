@@ -1,5 +1,5 @@
 import { Content } from "../content/Content";
-import { BlacklistedTag } from "../entity/BlacklistedTag";
+import { BlacklistedTag } from "../../entity/BlacklistedTag";
 import Log from "../utils/Logger";
 import { addTagBlocking, getBacklistItems } from "../handler/BlacklistHandler";
 import { isValidId } from "./Utils";

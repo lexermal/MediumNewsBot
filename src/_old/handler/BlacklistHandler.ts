@@ -1,6 +1,6 @@
 import { DataSource } from "typeorm";
-import { BlacklistedTag } from "../entity/BlacklistedTag";
-import { Source } from "../entity/Source";
+import { BlacklistedTag } from "../../entity/BlacklistedTag";
+import { Source } from "../../entity/Source";
 import Log from "../utils/Logger";
 
 const log = Log.getInstance();

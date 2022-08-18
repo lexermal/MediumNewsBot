@@ -1,10 +1,10 @@
 import { Context, Telegraf } from "telegraf";
 import { DataSource, In } from "typeorm";
 import UserArticleController from "../../controller/UserArticleController";
-import { Article } from "../entity/Article";
-import { BlacklistedTag } from "../entity/BlacklistedTag";
-import { Source, SourceType } from "../entity/Source";
-import { UserArticle } from "../entity/UserArticle";
+import { Article } from "../../entity/Article";
+import { BlacklistedTag } from "../../entity/BlacklistedTag";
+import { Source, SourceType } from "../../entity/Source";
+import { UserArticle } from "../../entity/UserArticle";
 import Log from "./Logger";
 
 const log = Log.getInstance();

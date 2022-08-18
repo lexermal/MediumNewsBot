@@ -1,4 +1,4 @@
-import { Article } from "../_old/entity/Article";
+import { Article } from "../entity/Article";
 import Log from "../_old/utils/Logger";
 import DatabaseController from "./DatabaseController";
 import UserArticleController from "./UserArticleController";

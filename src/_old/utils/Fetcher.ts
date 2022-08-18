@@ -1,7 +1,7 @@
 import parse, { HTMLElement } from "node-html-parser";
 import Parser from "rss-parser";
-import { Article } from "../entity/Article";
-import { Source, SourceType } from "../entity/Source";
+import { Article } from "../../entity/Article";
+import { Source, SourceType } from "../../entity/Source";
 import Log from "./Logger";
 
 export class Fetcher {
