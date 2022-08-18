@@ -50,16 +50,16 @@ export function attachSourceHandling() {
 }
 
 async function getSourceList(chatId: number) {
-    let sourceList = getFormattedSourceList(await SourceController.getSources(chatId));
+    let sources = getFormattedList(await SourceController.getSources(chatId));
 
-    if (sourceList.length === 0) {
-        sourceList = "No sources are in your list.";
+    if (sources.length === 0) {
+        sources = "No sources are in your list.";
     }
 
-    return `*Your medium sources:*\r\n\r\n${sourceList}`;
+    return `*Your medium sources:*\r\n\r\n${sources}`;
 }
 
-function getFormattedSourceList(sources: Source[]) {
+function getFormattedList(sources: Source[]) {
     return sources
         .map((source, index) => `*${index + 1}*: [${source.urlPart1}](${getSourceLink(source)})`)
         .join("\r\n");
