@@ -7,7 +7,7 @@ class DBController {
     async initDB() {
         this.db = await new DataSource({
             type: "sqlite",
-            database: __dirname + '/../db/database.sqlite',
+            database: __dirname + '/../../db/database.sqlite',
             entities: [__dirname + '/../entity/**/*.ts'],
             synchronize: true,
         }).initialize();
