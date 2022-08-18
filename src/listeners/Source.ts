@@ -2,27 +2,27 @@ import { URL } from "url";
 import { Content } from "../_old/content/Content";
 import { Source } from "../entity/Source";
 import { getSourceLink } from "../_old/utils/ArticleSender";
-import { validURL, getSource } from "../_old/utils/SourceTypeAnalyser";
 import { Fetcher } from "../_old/utils/Fetcher";
 import SourceController from "../controller/SourceController";
 import BotController from "../controller/BotController";
 
 export function attachSourceListeners() {
-    BotController.addListener("add", true, async (chatID, url) => {
-        if (!validURL(url)) {
+
+    BotController.addListener("add", true, async (chatId, url) => {
+        if (!isValidURL(url)) {
             return "The provided url is not valid.";
         }
 
-        const [sourceType, urlPart] = getSource(new URL(url));
+        const source = SourceController.urlToSource(chatId, new URL(url));
 
-        if (!await Fetcher.isFetchable(Fetcher.getURL(sourceType, [urlPart]))) {
-            return `The url should be of type ${sourceType} but the RSS feed was not fetchable.` +
+        if (!await Fetcher.isFetchable(SourceController.getFeedUrl(source))) {
+            return `The url should be of type ${source.type} but the RSS feed was not fetchable.` +
                 ` Are you sure you provided a url to a blog that uses the Medium.com CMS?`;
         }
 
-        SourceController.addSource(chatID, sourceType, urlPart);
+        SourceController.addSource(chatId, source.type, source.urlPart1);
 
-        return `*${urlPart}* of type *${sourceType}* ${Content.added}`;
+        return `*${source.urlPart1}* of type *${source.type}* ${Content.added}`;
     });
 
     BotController.addListener("add", false, () => Content.add, { disablePreview: true });
@@ -61,4 +61,13 @@ function getFormattedList(sources: Source[]) {
     return sources
         .map((source, index) => `*${index + 1}*: [${source.urlPart1}](${getSourceLink(source)})`)
         .join("\r\n");
+}
+
+function isValidURL(string: string) {
+    try {
+        const url = new URL(string);
+        return url.protocol === "http:" || url.protocol === "https:";
+    } catch (_) {
+        return false;
+    }
 }

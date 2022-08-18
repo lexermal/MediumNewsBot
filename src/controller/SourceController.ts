@@ -62,6 +62,41 @@ class _SourceController {
         }
         return true;
     }
+
+    getFeedUrl(source: Source) {
+        switch (source.type) {
+            case SourceType.USER:
+                return `https://medium.com/feed/@${source.urlPart1}`;
+            case SourceType.DOMAIN:
+                return `https://${source.urlPart1}/feed`;
+            case SourceType.TAG:
+                return `https://medium.com/feed/tag/${source.urlPart1}`;
+            case SourceType.PUBLICATION:
+                return `https://medium.com/feed/${source.urlPart1}`;
+            default:
+                throw new Error(`Unknown fetchingtype '${source.type}'`);
+        }
+    }
+
+    urlToSource(chatId: number, url: URL) {
+        const source = new Source();
+
+        if (url.hostname !== "medium.com") {
+            return source.setParameters(chatId, SourceType.DOMAIN, url.hostname);
+        }
+
+        const urlParts = url.pathname.split("/");
+
+        if (url.pathname.startsWith("/tag/")) {
+            return source.setParameters(chatId, SourceType.TAG, urlParts[2]);
+        }
+
+        if (url.pathname.startsWith("/@")) {
+            return source.setParameters(chatId, SourceType.USER, urlParts[1].substring(1));
+        }
+
+        return source.setParameters(chatId, SourceType.PUBLICATION, urlParts[1]);  // eg. /personal-growth
+    }
 }
 
 const SourceController = new _SourceController();

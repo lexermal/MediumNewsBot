@@ -1,31 +1,11 @@
 import parse, { HTMLElement } from "node-html-parser";
 import Parser from "rss-parser";
+import SourceController from "../../controller/SourceController";
 import { Article } from "../../entity/Article";
-import { Source, SourceType } from "../../entity/Source";
+import { Source } from "../../entity/Source";
 import Log from "../../utils/Logger";
 
 export class Fetcher {
-
-    public async getLatestArticles(source: Source) {
-        return await this.getCurrentArticles(Fetcher.getURL(source.type, source.urlParts));
-    }
-
-    public static getURL(type: SourceType, urlParts: string[]) {
-        switch (type) {
-            case SourceType.USER:
-                return `https://medium.com/feed/@${urlParts[0]}`;
-            case SourceType.DOMAIN:
-                return `https://${urlParts[0]}/feed`;
-            case SourceType.TAG:
-                return `https://medium.com/feed/tag/${urlParts[0]}`;
-            case SourceType.PUBLICATION:
-                return `https://medium.com/feed/${urlParts[0]}`;
-            default:
-                throw new Error(`Unknown fetchingtype '${type}'`)
-        }
-
-    }
-
 
     public static async isFetchable(url: string): Promise<boolean> {
         const parser = new Parser();
@@ -33,8 +13,9 @@ export class Fetcher {
         return parser.parseURL(url).then(() => true).catch(() => false);
     }
 
+    public async getLatestArticles(source: Source): Promise<Article[]> {
+        const url = SourceController.getFeedUrl(source);
 
-    async getCurrentArticles(url: string): Promise<Article[]> {
         const parser = new Parser();
 
         return parser.parseURL(url)
@@ -42,7 +23,7 @@ export class Fetcher {
                 Log.error(`The following error accured when fetching articles from ${url}: ${e.message}`, e);
                 return { items: [] };
             }).then(feed => {
-                const posts = feed.items.filter(item => typeof item.categories !== 'undefined' && item.categories.length > 0)
+                const posts = feed.items.filter(item => typeof item.categories !== 'undefined' && item.categories.length > 0);
 
                 return posts.map(item => {
                     const article = new Article();
@@ -63,7 +44,7 @@ export class Fetcher {
                     }
 
                     return article;
-                })
-            })
+                });
+            });
     }
 }

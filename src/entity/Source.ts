@@ -26,6 +26,15 @@ export class Source {
         this.urlPart1 = part;
         this.urlPart2 = "";
     }
+
+    setParameters(chatId: number, type: SourceType, urlPart: string) {
+        this.chatId = chatId;
+        this.type = type;
+
+        this.setUrlpart(urlPart);
+
+        return this;
+    }
 }
 
 
