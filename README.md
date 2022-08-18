@@ -23,12 +23,11 @@ Try it out: [mediumNewsBot](t.me/MediumListenerBot)
 
 
 ## Build the container
-1. docker build . -t mediumnewsbot
-2. docker run -d mediumnewsbot
+1. ```docker build . -t mediumnewsbot```
+2. ```docker compose up -d```
 
 ## Todo
 * Update the database schema
 
 ## Copyright
-
 Copyright by Lexermal
