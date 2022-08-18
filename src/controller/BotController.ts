@@ -42,7 +42,7 @@ class _BotController {
 
         this.bot.hears(listener, async (msg) => {
             const chatId = msg.message!.chat.id;
-            const additionalText = (msg.match![1]).toString().trim();
+            const additionalText = (msg.match![1] || "").toString().trim();
 
             msg.replyWithMarkdown(await fnc(chatId, additionalText), { disable_web_page_preview: messageOptions?.disablePreview });
         });

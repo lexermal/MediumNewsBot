@@ -1,5 +1,5 @@
 import { URL } from "url";
-import { Content } from "../_old/content/Content";
+import { Content } from "../content/Content";
 import { Source } from "../entity/Source";
 import SourceController from "../controller/SourceController";
 import BotController from "../controller/BotController";

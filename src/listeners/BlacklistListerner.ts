@@ -1,4 +1,4 @@
-import { Content } from "../_old/content/Content";
+import { Content } from "../content/Content";
 import { BlacklistedTag } from "../entity/BlacklistedTag";
 import BotController from "../controller/BotController";
 import BlacklistController from "../controller/BlackListController";

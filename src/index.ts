@@ -3,7 +3,7 @@ import BotController from "./controller/BotController";
 import DatabaseController from "./controller/DatabaseController";
 import { attachBlacklistListeners } from "./listeners/BlacklistListerner";
 import { attachSourceListeners } from "./listeners/SourceListener";
-import { Content } from "./_old/content/Content";
+import { Content } from "./content/Content";
 import Log from "./utils/Logger";
 import ArticleController from "./controller/ArticleController";
 
