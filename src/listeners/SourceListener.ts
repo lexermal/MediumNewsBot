@@ -2,7 +2,7 @@ import { URL } from "url";
 import { Content } from "../_old/content/Content";
 import { Source } from "../entity/Source";
 import { getSourceLink } from "../_old/utils/ArticleSender";
-import { Fetcher } from "../_old/utils/Fetcher";
+import { Fetcher } from "../utils/ArticleFetcher";
 import SourceController from "../controller/SourceController";
 import BotController from "../controller/BotController";
 

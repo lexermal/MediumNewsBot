@@ -1,6 +1,6 @@
 import ArticleController from "../../controller/ArticleController";
 import SourceController from "../../controller/SourceController";
-import { Fetcher } from "./Fetcher";
+import { Fetcher } from "../../utils/ArticleFetcher";
 import Log from "../../utils/Logger";
 
 const fetcher = new Fetcher();
