@@ -1,6 +1,8 @@
 import { Context, Telegraf } from "telegraf";
 import Log from "../_old/utils/Logger";
 
+type MessageFunction = (chatId: number, additionalSendText: string) => Promise<string> | string;
+
 const log = Log.getInstance();
 
 class _BotController {
@@ -14,23 +16,34 @@ class _BotController {
         return this.bot;
     }
 
-    setWelcomeMessage(fnc: (chatId: number) => string) {
-        this.bot.hears(/\/start/, (msg) => {
-            const chatId = msg.message!.chat.id;
-
+    setWelcomeMessage(fnc: MessageFunction) {
+        this.addListener("start", false, async (chatId, additionalText) => {
             log.info(`User ${chatId} joined the bot.`);
 
-            msg.replyWithMarkdown(fnc(chatId));
+            return await fnc(chatId, additionalText);
         });
     }
 
-    setHelpMessage(fnc: (chatId: number) => string) {
-        this.bot.hears(/\/help/, (msg) => {
-            const chatId = msg.message!.chat.id;
-
+    setHelpMessage(fnc: MessageFunction) {
+        this.addListener("help", false, async (chatId, additionalText) => {
             log.info(`User ${chatId} requested the help message.`);
 
-            msg.replyWithMarkdown(fnc(chatId));
+            return await fnc(chatId, additionalText);
+        });
+    }
+
+    addListener(command: string, anyFollowingCharacters: boolean, fnc: MessageFunction) {
+        let listener = new RegExp("/" + command);
+
+        if (anyFollowingCharacters) {
+            listener = new RegExp("/" + command + " (.+)");
+        }
+
+        this.bot.hears(listener, async (msg) => {
+            const chatId = msg.message!.chat.id;
+            const additionalText = msg.match![1];
+
+            msg.replyWithMarkdown(await fnc(chatId, additionalText));
         });
     }
 
