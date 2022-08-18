@@ -1,10 +1,10 @@
 import { Article } from "../entity/Article";
-import { ArticleFetcher } from "../utils/ArticleFetcher";
 import Log from "../utils/Logger";
-import ArticleSender from "../_old/utils/ArticleSender";
+import ArticleSender from "../dal/ArticleSender";
 import DatabaseController from "./DatabaseController";
 import SourceController from "./SourceController";
 import UserArticleController from "./UserArticleController";
+import { ArticleFetcher } from "../dal/ArticleFetcher";
 
 class _ArticleController {
     fetcher = new ArticleFetcher();

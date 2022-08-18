@@ -3,7 +3,7 @@ import Parser from "rss-parser";
 import SourceController from "../controller/SourceController";
 import { Article } from "../entity/Article";
 import { Source } from "../entity/Source";
-import Log from "./Logger";
+import Log from "../utils/Logger";
 
 type FetcherItem = { [key: string]: any; } & Parser.Item;
 export class ArticleFetcher {

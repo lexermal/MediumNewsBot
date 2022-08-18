@@ -1,12 +1,12 @@
-import ArticleController from "../../controller/ArticleController";
-import BlacklistController from "../../controller/BlackListController";
-import BotController from "../../controller/BotController";
-import SourceController from "../../controller/SourceController";
-import UserArticleController from "../../controller/UserArticleController";
-import { Article } from "../../entity/Article";
-import { Source } from "../../entity/Source";
-import { UserArticle } from "../../entity/UserArticle";
-import Log from "../../utils/Logger";
+import ArticleController from "../controller/ArticleController";
+import BlacklistController from "../controller/BlackListController";
+import BotController from "../controller/BotController";
+import SourceController from "../controller/SourceController";
+import UserArticleController from "../controller/UserArticleController";
+import { Article } from "../entity/Article";
+import { Source } from "../entity/Source";
+import { UserArticle } from "../entity/UserArticle";
+import Log from "../utils/Logger";
 
 export default class ArticleSender {
     async sendArticles(sendingDuration: number) {

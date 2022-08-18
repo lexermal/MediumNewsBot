@@ -1,9 +1,9 @@
 import { URL } from "url";
 import { Content } from "../_old/content/Content";
 import { Source } from "../entity/Source";
-import { ArticleFetcher } from "../utils/ArticleFetcher";
 import SourceController from "../controller/SourceController";
 import BotController from "../controller/BotController";
+import { ArticleFetcher } from "../dal/ArticleFetcher";
 
 export function attachSourceListeners() {
 
