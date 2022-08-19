@@ -41,8 +41,8 @@ export class ArticleFetcher {
         article.articleId = item.guid!;
         article.title = item.title!.replace(/(?:\r\n|\r|\n)/g, ' ');
         article.link = item.link!.split("?")[0];
-        article.creator = item.creator!;
-        article.pubDate = item.isoDate!;
+        article.creator = item.creator||"";
+        article.pubDate = item.isoDate||"";
         article.previewText = (item.contentSnippet || "").replace(/(?:\r\n|\r|\n)/g, ' ').split("Continue reading on")[0].trim();
         article.setTags(item.categories!);
 
