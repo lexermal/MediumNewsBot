@@ -17,9 +17,9 @@ export default class ArticleSender {
             // get unseed articles of an user
             const articles = await Promise.all(
                 userArticles.map(ua => ArticleController.getArticle(ua.articleId))
-            ) as Article[];
+            );
 
-            const sendableArticles = await this.getNonBlockedArticles(chatId, articles);
+            const sendableArticles = await this.getNonBlockedArticles(chatId, articles.filter(a => a !== null) as Article[]);
 
             await Promise.all(sendableArticles.map(async article => {
                 //find the sourceId
