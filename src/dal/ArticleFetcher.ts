@@ -31,7 +31,7 @@ export class ArticleFetcher {
             }).then(async feed => {
                 const posts = feed.items.filter(item => typeof item.categories !== 'undefined' && item.categories.length > 0);
 
-                return posts.map(this.convertToArticle);
+                return posts.map((item) => this.convertToArticle(item));
             });
     }
 
@@ -41,9 +41,19 @@ export class ArticleFetcher {
         article.articleId = item.guid!;
         article.title = item.title!.replace(/(?:\r\n|\r|\n)/g, ' ');
         article.link = item.link!.split("?")[0];
-        article.creator = item.creator||"";
-        article.pubDate = item.isoDate||"";
-        article.previewText = (item.contentSnippet || "").replace(/(?:\r\n|\r|\n)/g, ' ').split("Continue reading on")[0].trim();
+        article.creator = item.creator || "";
+        article.pubDate = item.isoDate || "";
+
+        let previewText = (item.contentSnippet || "")
+            .replace(/(?:\r\n|\r|\n)/g, ' ')
+            .split("Continue reading on")[0]
+            .trim();
+
+        if (previewText.length > 150) {
+            previewText = this.shorten(previewText, 150) + "...";
+        }
+        article.previewText = previewText;
+
         article.setTags(item.categories!);
 
         if (item.content) {
@@ -54,6 +64,13 @@ export class ArticleFetcher {
         }
 
         return article;
+    }
+
+    shorten(text: string, maxCharacters: number) {
+        const shortenedString = text.substring(0, maxCharacters);
+        const lastSpace = shortenedString.lastIndexOf(" ");
+
+        return shortenedString.substring(0, lastSpace);
     }
 
 
