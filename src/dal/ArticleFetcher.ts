@@ -44,10 +44,7 @@ export class ArticleFetcher {
         article.creator = item.creator || "";
         article.pubDate = item.isoDate || "";
 
-        let previewText = (item.contentSnippet || "")
-            .replace(/(?:\r\n|\r|\n)/g, ' ')
-            .split("Continue reading on")[0]
-            .trim();
+        let previewText = this.getTeaser(item);
 
         if (previewText.length > 150) {
             previewText = this.shorten(previewText, 150) + "...";
@@ -71,6 +68,26 @@ export class ArticleFetcher {
         const lastSpace = shortenedString.lastIndexOf(" ");
 
         return shortenedString.substring(0, lastSpace);
+    }
+
+    getTeaser(item: FetcherItem) {
+        if (item.contentSnippet) {
+            return item.contentSnippet
+                .replace(/(?:\r\n|\r|\n)/g, ' ')
+                .split("Continue reading on")[0]
+                .trim();
+        } else if (item["content:encoded"]) {
+            const teaser = item["content:encoded"] as string;
+
+            //get second paragraph
+            //strip line breaks
+            //strip html tags
+            return teaser.split("<p>")[1].replace("</p>", "")
+                .replace(/(?:\r\n|\r|\n)/g, ' ')
+                .replace(/(<([^>]+)>)/gi, "").trim();
+        }
+
+        return "";
     }
 
 
