@@ -71,18 +71,32 @@ export class ArticleFetcher {
     }
 
     getTeaser(item: FetcherItem) {
+        Log.debug("Getting teaser from " + item.link!.split("?")[0]);
+
         if (item.contentSnippet) {
             return item.contentSnippet
                 .replace(/(?:\r\n|\r|\n)/g, ' ')
                 .split("Continue reading on")[0]
                 .trim();
-        } else if (item["content:encoded"]) {
-            const teaser = item["content:encoded"] as string;
+        } else if (item["content:encoded"]?.split("<p>")[1]) {
+            const teaser = item["content:encoded"].split("<p>")[1] as string;
 
             //get second paragraph
             //strip line breaks
             //strip html tags
-            return teaser.split("<p>")[1].replace("</p>", "")
+            return teaser
+                .replace("</p>", "")
+                .replace(/(?:\r\n|\r|\n)/g, ' ')
+                .replace(/(<([^>]+)>)/gi, "").trim();
+        } else if (item["content:encoded"]?.split('<div class="paragraph">')[1]) {
+
+            const teaser = item["content:encoded"].split('<div class="paragraph">')[1] as string;
+
+            //get second paragraph
+            //strip line breaks
+            //strip html tags
+            return teaser
+                .replace("</div>", "")
                 .replace(/(?:\r\n|\r|\n)/g, ' ')
                 .replace(/(<([^>]+)>)/gi, "").trim();
         }
